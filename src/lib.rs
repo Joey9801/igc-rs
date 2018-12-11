@@ -188,13 +188,65 @@ impl BRecord {
     }
 }
 
-pub struct CRecord {
-    date: Date,
-    time: Time,
-    flight_date: Date,
-    task_id: u16,
-    turnpoint_count: u8,
-    name: String,
+pub struct CRecordDeclaration {
+    pub date: Date,
+    pub time: Time,
+    pub flight_date: Date,
+    pub task_id: u16,
+    pub turnpoint_count: u8,
+    pub name: Option<String>,
+}
+
+impl CRecordDeclaration {
+    fn parse(line: &str) -> Result<Self, ParseError> {
+        assert!(line.len() >= 25);
+        assert!(line.as_bytes()[0] == b'C');
+
+        let date = Date::parse(&line[1..7])?;
+        let time = Time::parse(&line[7..13])?;
+        let flight_date = Date::parse(&line[13..19])?;
+        let task_id = line[19..23].parse::<u16>()?;
+        let turnpoint_count = line[23..25].parse::<u8>()?;
+        let name = if line.len() > 25 {
+            Some(String::from(&line[25..]))
+        } else {
+            None
+        };
+
+        Ok(CRecordDeclaration { date, time, flight_date, task_id, turnpoint_count, name })
+    }
+}
+
+pub struct CRecordTurnpoint {
+    pub position: RawPosition,
+    pub name: Option<String>,
+}
+
+impl CRecordTurnpoint {
+    fn parse(line: &str) -> Result<Self, ParseError> {
+        assert!(line.len() >= 18);
+        assert!(line.as_bytes()[0] == b'C');
+
+        let position = RawPosition::parse_lat_lon(&line[1..18])?;
+        let name = if line.len() > 18 {
+            Some(String::from(&line[18..]))
+        } else {
+            None
+        };
+
+        Ok(CRecordTurnpoint { position, name })
+    }
+}
+
+pub struct Task {
+    pub declaration: CRecordDeclaration,
+    pub turnpoints: Vec<CRecordTurnpoint>,
+}
+
+impl Task {
+    fn from(declaration: CRecordDeclaration) -> Self {
+        Task { declaration, turnpoints: Vec::<CRecordTurnpoint>::new() }
+    }
 }
 
 
@@ -202,6 +254,7 @@ pub struct CRecord {
 pub struct IGCFile {
     pub filepath: PathBuf,
     pub fixes: Vec<BRecord>,
+    pub task: Option<Task>,
 }
 
 impl IGCFile {
@@ -209,12 +262,20 @@ impl IGCFile {
         IGCFile {
             filepath: filepath.to_path_buf(),
             fixes: Vec::<BRecord>::new(),
+            task: None
         }
     }
 
     fn _parse_line(&mut self, line: &str) -> Result<(), ParseError> {
-        match line.chars().next().unwrap() {
-            'B' => self.fixes.push(BRecord::parse(line)?),
+        match line.as_bytes()[0] {
+            b'B' => self.fixes.push(BRecord::parse(line)?),
+            b'C' => {
+                if let Some(ref mut task) = self.task {
+                    task.turnpoints.push(CRecordTurnpoint::parse(line)?);
+                } else {
+                    self.task = Some(Task::from(CRecordDeclaration::parse(line)?));
+                }
+            },
             _ => ()
         }
 
