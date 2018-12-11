@@ -100,6 +100,22 @@ impl RawCoord {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub struct RawPosition {
+    pub lat: RawCoord,
+    pub lon: RawCoord,
+}
+
+impl RawPosition {
+    fn parse_lat_lon(pos_string: &str) -> Result<Self, ParseError> {
+        assert_eq!(pos_string.len(), 17);
+        let lat = RawCoord::parse_lat(&pos_string[0..8])?;
+        let lon = RawCoord::parse_lon(&pos_string[8..17])?;
+
+        Ok(Self { lat, lon })
+    }
+}
+
 /// Possible values for the "fix valid" field of a B Record
 #[derive(Debug, PartialEq, Eq)]
 pub enum FixValid {
@@ -118,8 +134,7 @@ pub enum FixValid {
 #[derive(Debug, PartialEq, Eq)]
 pub struct BRecord {
     pub timestamp: Time,
-    pub lat: RawCoord,
-    pub lon: RawCoord,
+    pub pos: RawPosition,
     pub fix_valid: FixValid,
     pub pressure_alt: u16,
 }
@@ -135,8 +150,7 @@ impl BRecord {
     /// ```
     pub fn parse(line: &str) -> Result<Self, ParseError> {
         let timestamp = Time::parse(&line[1..7])?;
-        let lat = RawCoord::parse_lat(&line[7..15])?;
-        let lon = RawCoord::parse_lon(&line[15..24])?;
+        let pos = RawPosition::parse_lat_lon(&line[7..24])?;
 
         let fix_valid = match &line[24..25] {
             "A" => FixValid::Valid,
@@ -146,7 +160,7 @@ impl BRecord {
 
         let pressure_alt = line[25..30].parse::<u16>()?;
 
-        Ok(BRecord { timestamp, lat, lon, fix_valid, pressure_alt })
+        Ok(BRecord { timestamp, pos, fix_valid, pressure_alt })
     }
 }
 
@@ -233,16 +247,18 @@ mod test {
         let parsed_record = BRecord::parse(sample_string).unwrap();
         let expected = BRecord {
             timestamp: Time { hours: 9, minutes: 41, seconds: 14 },
-            lat: RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, sign: Compass::North },
-            lon: RawCoord { degrees: 0, minutes: 32, minutes_fraction: 642, sign: Compass::West },
+            pos: RawPosition {
+                lat: RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, sign: Compass::North },
+                lon: RawCoord { degrees: 0, minutes: 32, minutes_fraction: 642, sign: Compass::West },
+            },
             fix_valid: FixValid::Valid,
             pressure_alt: 115,
         };
 
         // Assert the fields individually first, to give better error messages if they don't match
         assert_eq!(parsed_record.timestamp, expected.timestamp);
-        assert_eq!(parsed_record.lat, expected.lat);
-        assert_eq!(parsed_record.lon, expected.lon);
+        assert_eq!(parsed_record.pos.lat, expected.pos.lat);
+        assert_eq!(parsed_record.pos.lon, expected.pos.lon);
         assert_eq!(parsed_record.fix_valid, expected.fix_valid);
         assert_eq!(parsed_record.pressure_alt, expected.pressure_alt);
         assert_eq!(parsed_record, expected);
