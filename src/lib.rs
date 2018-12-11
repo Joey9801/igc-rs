@@ -41,13 +41,21 @@ impl Time {
     }
 }
 
+#[derive(Debug, Eq, PartialEq)]
+enum Compass {
+    North,
+    South,
+    East,
+    West,
+}
+
 /// Represents a raw coordinate, as it appears in an IGC file.
 #[derive(Debug, PartialEq, Eq)]
 pub struct RawCoord {
     degrees: u8,           // in range (0, 90) for lat, (0, 180) for lon
     minutes: u8,           // in range (0, 60)
     minutes_fraction: u16, // Thousandths of a minute, in range(0, 1000)
-    negative: bool,        // Is this co-ord negative, ie South for lat or West for lon
+    sign: Compass,
 }
 
 impl RawCoord {
@@ -58,16 +66,16 @@ impl RawCoord {
         let degrees = lat_string[0..2].parse::<u8>()?;
         let minutes = lat_string[2..4].parse::<u8>()?;
         let minutes_fraction = lat_string[4..7].parse::<u16>()?;
-        let negative = match &lat_string[7..8] {
-            "N" => false,
-            "S" => true,
+        let sign = match &lat_string[7..8] {
+            "N" => Compass::North,
+            "S" => Compass::South,
             _ => return Err(ParseError::SyntaxError),
         };
 
         if degrees > 90 || minutes > 60 || minutes_fraction > 999 {
             Err(ParseError::NumberOutOfRange)
         } else {
-            Ok(RawCoord { degrees, minutes, minutes_fraction, negative })
+            Ok(RawCoord { degrees, minutes, minutes_fraction, sign })
         }
     }
 
@@ -78,16 +86,16 @@ impl RawCoord {
         let degrees = lat_string[0..3].parse::<u8>()?;
         let minutes = lat_string[3..5].parse::<u8>()?;
         let minutes_fraction = lat_string[5..8].parse::<u16>()?;
-        let negative = match &lat_string[8..9] {
-            "E" => false,
-            "W" => true,
+        let sign = match &lat_string[8..9] {
+            "E" => Compass::East,
+            "W" => Compass::West,
             _ => return Err(ParseError::SyntaxError),
         };
 
         if degrees > 180 || minutes > 60 || minutes_fraction > 999 {
             Err(ParseError::NumberOutOfRange)
         } else {
-            Ok(RawCoord { degrees, minutes, minutes_fraction, negative })
+            Ok(RawCoord { degrees, minutes, minutes_fraction, sign })
         }
     }
 }
@@ -198,17 +206,17 @@ mod test {
     #[test]
     fn raw_coord_parse_lat() {
         assert_eq!(RawCoord::parse_lat("5152265N").unwrap(),
-                   RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, negative: false});
+                   RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, sign: Compass::North });
         assert_eq!(RawCoord::parse_lat("5152265S").unwrap(),
-                   RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, negative: true});
+                   RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, sign: Compass::South });
     }
 
     #[test]
     fn raw_coord_parse_lon() {
         assert_eq!(RawCoord::parse_lon("05152265E").unwrap(),
-                   RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, negative: false});
+                   RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, sign: Compass::East });
         assert_eq!(RawCoord::parse_lon("05152265W").unwrap(),
-                   RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, negative: true});
+                   RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, sign: Compass::West });
     }
 
     #[test]
@@ -218,8 +226,8 @@ mod test {
         let parsed_record = BRecord::parse(sample_string).unwrap();
         let expected = BRecord {
             timestamp: Time { hours: 9, minutes: 41, seconds: 14 },
-            lat: RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, negative: false },
-            lon: RawCoord { degrees: 0, minutes: 32, minutes_fraction: 642, negative: true },
+            lat: RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, sign: Compass::North },
+            lon: RawCoord { degrees: 0, minutes: 32, minutes_fraction: 642, sign: Compass::West },
             fix_valid: false,
             pressure_alt: 115,
         };
