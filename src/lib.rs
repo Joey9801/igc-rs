@@ -100,6 +100,13 @@ impl RawCoord {
     }
 }
 
+/// Possible values for the "fix valid" field of a B Record
+#[derive(Debug, PartialEq, Eq)]
+pub enum FixValid {
+    Valid,
+    NavWarning,
+}
+
 /// Closely represents a parsed IGC B-Record with minimal post-processing
 ///
 /// Only the fields for { timestamp, lat, lon, fix_valid, pressure_altitude } are stored.
@@ -113,7 +120,7 @@ pub struct BRecord {
     pub timestamp: Time,
     pub lat: RawCoord,
     pub lon: RawCoord,
-    pub fix_valid: bool,
+    pub fix_valid: FixValid,
     pub pressure_alt: u16,
 }
 
@@ -132,8 +139,8 @@ impl BRecord {
         let lon = RawCoord::parse_lon(&line[15..24])?;
 
         let fix_valid = match &line[24..25] {
-            "A" => false,
-            "V" => true,
+            "A" => FixValid::Valid,
+            "V" => FixValid::NavWarning,
             _ => return Err(ParseError::SyntaxError),
         };
 
@@ -228,7 +235,7 @@ mod test {
             timestamp: Time { hours: 9, minutes: 41, seconds: 14 },
             lat: RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, sign: Compass::North },
             lon: RawCoord { degrees: 0, minutes: 32, minutes_fraction: 642, sign: Compass::West },
-            fix_valid: false,
+            fix_valid: FixValid::Valid,
             pressure_alt: 115,
         };
 
