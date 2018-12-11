@@ -1,0 +1,4 @@
+[package]
+name = "igc-rs"
+version = "0.1.0"
+authors = ["Joe Roberts <joe@jwjr.co.uk>"]
