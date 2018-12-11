@@ -41,6 +41,30 @@ impl Time {
     }
 }
 
+/// Represents a single Gregorian calendar day
+#[derive(Debug, PartialEq, Eq)]
+pub struct Date {
+    pub day: u8,
+    pub month: u8,
+    pub year: u16,
+}
+
+impl Date {
+    /// Parses a date string of the form "DDMMYY"
+    /// There are not enough digits for the year in this format (bytes are expensive, yo), so
+    /// unilaterlly assume that the date is in the 21st century.
+    fn parse(date_string: &str) -> Result<Self, ParseError> {
+        assert_eq!(date_string.len(), 6);
+
+        let day = date_string[0..2].parse::<u8>()?;
+        let month = date_string[2..4].parse::<u8>()?;
+        let year = date_string[4..6].parse::<u16>()? + 2000;
+
+        Ok(Date { day, month, year })
+    }
+}
+
+
 #[derive(Debug, Eq, PartialEq)]
 enum Compass {
     North,
@@ -164,6 +188,15 @@ impl BRecord {
     }
 }
 
+pub struct CRecord {
+    date: Date,
+    time: Time,
+    flight_date: Date,
+    task_id: u16,
+    turnpoint_count: u8,
+    name: String,
+}
+
 
 /// Closely represents a parsed IGC file, with minimal post-processing
 pub struct IGCFile {
@@ -222,6 +255,14 @@ mod test {
                    Time { hours: 1, minutes: 23, seconds: 45 });
         assert_eq!(Time::parse("152136").unwrap(),
                    Time { hours: 15, minutes: 21, seconds: 36 });
+    }
+
+    #[test]
+    fn date_parse() {
+        assert_eq!(Date::parse("010118").unwrap(),
+                    Date { day: 1, month: 1, year: 2018 });
+        assert_eq!(Date::parse("120757").unwrap(),
+                    Date { day: 12, month: 7, year: 2057 });
     }
 
     #[test]
