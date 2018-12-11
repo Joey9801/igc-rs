@@ -188,6 +188,7 @@ impl BRecord {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct CRecordDeclaration {
     pub date: Date,
     pub time: Time,
@@ -217,6 +218,7 @@ impl CRecordDeclaration {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct CRecordTurnpoint {
     pub position: RawPosition,
     pub name: Option<String>,
@@ -364,5 +366,42 @@ mod test {
         assert_eq!(parsed_record.fix_valid, expected.fix_valid);
         assert_eq!(parsed_record.pressure_alt, expected.pressure_alt);
         assert_eq!(parsed_record, expected);
+    }
+
+    #[test]
+    fn c_record_declaration_parse() {
+        let sample_string = "C230718092044000000000204Foo task";
+        let parsed_declaration = CRecordDeclaration::parse(sample_string).unwrap();
+        let mut expected = CRecordDeclaration {
+            date: Date { day: 23, month: 07, year: 2018 },
+            time: Time { hours: 09, minutes: 20, seconds: 44 },
+            flight_date: Date { day: 00, month: 00, year: 2000 },
+            task_id: 2,
+            turnpoint_count: 4,
+            name: Some("Foo task".to_string())
+        };
+        assert_eq!(parsed_declaration, expected);
+
+        let sample_string = "C230718092044000000000204";
+        let parsed_declaration = CRecordDeclaration::parse(sample_string).unwrap();
+        expected.name = None;
+        assert_eq!(parsed_declaration, expected);
+
+    }
+
+    #[test]
+    fn c_record_turnpoint_parse() {
+        let sample_string = "C5156040N00038120WLBZ-Leighton Buzzard NE";
+        let parsed_turnpoint = CRecordTurnpoint::parse(sample_string).unwrap();
+        let expected = CRecordTurnpoint {
+            position: RawPosition {
+                lat: RawCoord { degrees: 51, minutes: 56, minutes_fraction: 40, sign: Compass::North },
+                lon: RawCoord { degrees: 00, minutes: 38, minutes_fraction: 120, sign: Compass::West },
+            },
+            name: Some("LBZ-Leighton Buzzard NE".to_string()),
+        };
+
+        assert_eq!(parsed_turnpoint, expected);
+
     }
 }
