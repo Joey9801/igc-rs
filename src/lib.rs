@@ -18,6 +18,60 @@ impl From<num::ParseIntError> for ParseError {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub enum Manufacturer {
+    Borgelt,
+    Cambridge,
+    EW,
+    Filser,
+    Ilec,
+    Metron,
+    Peschges,
+    SkyForce,
+    PathTracker,
+    Varcom,
+    Westerboer,
+    Zander,
+    Collins,
+    Honeywell,
+    King,
+    Garmin,
+    Trimble,
+    Motorola,
+    Magellan,
+    Rockwell,
+    Unknown(u8),
+}
+
+impl Manufacturer {
+    fn parse_code(code: u8) -> Manufacturer {
+        use Manufacturer::{*};
+        match code {
+            b'B' => Borgelt,
+            b'C' => Cambridge,
+            b'E' => EW,
+            b'F' => Filser,
+            b'I' => Ilec,
+            b'M' => Metron,
+            b'P' => Peschges,
+            b'S' => SkyForce,
+            b'T' => PathTracker,
+            b'V' => Varcom,
+            b'W' => Westerboer,
+            b'Z' => Zander,
+            b'1' => Collins,
+            b'2' => Honeywell,
+            b'3' => King,
+            b'4' => Garmin,
+            b'5' => Trimble,
+            b'6' => Motorola,
+            b'7' => Magellan,
+            b'8' => Rockwell,
+            unknown_code => Unknown(unknown_code),
+        }
+    }
+}
+
 /// Represents a specific time of day with second precision.
 ///
 /// Does not contain any timezone information as the IGC specification mandates UTC everywhere.
@@ -140,6 +194,30 @@ impl RawPosition {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub struct ARecord {
+    pub manufacturer: Manufacturer,
+    pub unique_id: String,
+    pub id_extension: Option<String>,
+}
+
+impl ARecord {
+    pub fn parse(line: &str) -> Result<Self, ParseError> {
+        assert!(line.len() >= 7);
+        assert_eq!(&line[0..1], "A");
+
+        let manufacturer = Manufacturer::parse_code(line.as_bytes()[1]);
+        let unique_id = line[2..7].to_string();
+        let id_extension = if line.len() > 7 {
+            Some(line[7..].to_string())
+        } else {
+            None
+        };
+
+        Ok(ARecord { manufacturer, unique_id, id_extension })
+    }
+}
+
 /// Possible values for the "fix valid" field of a B Record
 #[derive(Debug, PartialEq, Eq)]
 pub enum FixValid {
@@ -188,6 +266,7 @@ impl BRecord {
     }
 }
 
+/// The first flavor of C Record - a task record which defines some properties of the whole task.
 #[derive(Debug, PartialEq, Eq)]
 pub struct CRecordDeclaration {
     pub date: Date,
@@ -199,7 +278,7 @@ pub struct CRecordDeclaration {
 }
 
 impl CRecordDeclaration {
-    fn parse(line: &str) -> Result<Self, ParseError> {
+    pub fn parse(line: &str) -> Result<Self, ParseError> {
         assert!(line.len() >= 25);
         assert!(line.as_bytes()[0] == b'C');
 
@@ -311,6 +390,18 @@ impl IGCFile {
 #[cfg(test)]
 mod test {
     use super::{*};
+
+    #[test]
+    fn arecord_parse() {
+        assert_eq!(
+            ARecord::parse("ACIdStrFoo").unwrap(),
+            ARecord {
+                manufacturer: Manufacturer::Cambridge,
+                unique_id: "IdStr".to_string(),
+                id_extension: Some("Foo".to_string())
+            }
+        );
+    }
 
     #[test]
     fn time_parse() {
