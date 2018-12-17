@@ -56,21 +56,21 @@ impl Manufacturer {
 
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct ARecord {
+pub struct ARecord<'a> {
     pub manufacturer: Manufacturer,
-    pub unique_id: String,
-    pub id_extension: Option<String>,
+    pub unique_id: &'a str,
+    pub id_extension: Option<&'a str>,
 }
 
-impl ARecord {
-    pub fn parse(line: &str) -> Result<Self, ParseError> {
+impl<'a> ARecord<'a> {
+    pub fn parse(line: &'a str) -> Result<Self, ParseError> {
         assert!(line.len() >= 7);
         assert_eq!(&line[0..1], "A");
 
         let manufacturer = Manufacturer::parse_code(line.as_bytes()[1]);
-        let unique_id = line[2..7].to_string();
+        let unique_id = &line[2..7];
         let id_extension = if line.len() > 7 {
-            Some(line[7..].to_string())
+            Some(&line[7..])
         } else {
             None
         };

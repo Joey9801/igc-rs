@@ -4,17 +4,17 @@ use crate::util::parse_error::ParseError;
 
 /// The first flavor of C Record - a task record which defines some properties of the whole task.
 #[derive(Debug, PartialEq, Eq)]
-pub struct CRecordDeclaration {
+pub struct CRecordDeclaration<'a> {
     pub date: Date,
     pub time: Time,
     pub flight_date: Date,
     pub task_id: u16,
     pub turnpoint_count: u8,
-    pub name: Option<String>,
+    pub name: Option<&'a str>,
 }
 
-impl CRecordDeclaration {
-    pub fn parse(line: &str) -> Result<Self, ParseError> {
+impl<'a> CRecordDeclaration<'a> {
+    pub fn parse(line: &'a str) -> Result<Self, ParseError> {
         assert!(line.len() >= 25);
         assert!(line.as_bytes()[0] == b'C');
 
@@ -24,7 +24,7 @@ impl CRecordDeclaration {
         let task_id = line[19..23].parse::<u16>()?;
         let turnpoint_count = line[23..25].parse::<u8>()?;
         let name = if line.len() > 25 {
-            Some(String::from(&line[25..]))
+            Some(&line[25..])
         } else {
             None
         };
@@ -34,19 +34,19 @@ impl CRecordDeclaration {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct CRecordTurnpoint {
+pub struct CRecordTurnpoint<'a> {
     pub position: RawPosition,
-    pub name: Option<String>,
+    pub name: Option<&'a str>,
 }
 
-impl CRecordTurnpoint {
-    pub fn parse(line: &str) -> Result<Self, ParseError> {
+impl<'a> CRecordTurnpoint<'a> {
+    pub fn parse(line: &'a str) -> Result<Self, ParseError> {
         assert!(line.len() >= 18);
         assert!(line.as_bytes()[0] == b'C');
 
         let position = RawPosition::parse_lat_lon(&line[1..18])?;
         let name = if line.len() > 18 {
-            Some(String::from(&line[18..]))
+            Some(&line[18..])
         } else {
             None
         };

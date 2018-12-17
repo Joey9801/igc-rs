@@ -2,3 +2,10 @@
 name = "igc-rs"
 version = "0.1.0"
 authors = ["Joe Roberts <joe@jwjr.co.uk>"]
+
+[[bin]]
+name = "read_fixes_example"
+path = "examples/read_fixes.rs"
+
+[dependencies]
+memmap = "0.7.0"
