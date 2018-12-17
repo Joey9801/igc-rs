@@ -71,7 +71,7 @@ mod test {
             flight_date: Date { day: 00, month: 00, year: 2000 },
             task_id: 2,
             turnpoint_count: 4,
-            name: Some("Foo task".to_string())
+            name: Some("Foo task")
         };
         assert_eq!(parsed_declaration, expected);
 
@@ -88,10 +88,10 @@ mod test {
         let parsed_turnpoint = CRecordTurnpoint::parse(sample_string).unwrap();
         let expected = CRecordTurnpoint {
             position: RawPosition {
-                lat: RawCoord { degrees: 51, minutes: 56, minutes_fraction: 40, sign: Compass::North },
-                lon: RawCoord { degrees: 00, minutes: 38, minutes_fraction: 120, sign: Compass::West },
+                lat: RawCoord { degrees: 51, minute_thousandths: 56040, sign: Compass::North },
+                lon: RawCoord { degrees: 0, minute_thousandths: 38120, sign: Compass::West },
             },
-            name: Some("LBZ-Leighton Buzzard NE".to_string()),
+            name: Some("LBZ-Leighton Buzzard NE"),
         };
 
         assert_eq!(parsed_turnpoint, expected);

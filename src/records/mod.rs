@@ -43,7 +43,7 @@ impl<'a> Record<'a> {
 mod test {
     #[test]
     fn parse_record_line() {
-        let rec = super::parse_record_line("ACIdStrFoo").unwrap();
+        let rec = super::Record::parse_line("ACIdStrFoo").unwrap();
         println!("rec = {:?}", rec);
         if let super::Record::A(a_record) = rec {
             println!("The record was an A record: {:?}", a_record);

@@ -1,5 +1,6 @@
 mod util;
 pub use self::util::parse_error::ParseError;
+pub use self::util::datetime::{Date,Time};
 
 mod records;
 pub use self::records::*;

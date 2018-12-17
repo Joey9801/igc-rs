@@ -89,8 +89,8 @@ mod test {
             ARecord::parse("ACIdStrFoo").unwrap(),
             ARecord {
                 manufacturer: Manufacturer::Cambridge,
-                unique_id: "IdStr".to_string(),
-                id_extension: Some("Foo".to_string())
+                unique_id: "IdStr",
+                id_extension: Some("Foo")
             }
         );
     }

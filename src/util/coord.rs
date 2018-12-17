@@ -11,9 +11,8 @@ pub enum Compass {
 /// Represents a raw coordinate, as it appears in an IGC file.
 #[derive(Debug, PartialEq, Eq)]
 pub struct RawCoord {
-    pub degrees: u8,           // in range (0, 90) for lat, (0, 180) for lon
-    pub minutes: u8,           // in range (0, 60)
-    pub minutes_fraction: u16, // Thousandths of a minute, in range(0, 1000)
+    pub degrees: u8,              // in range (0, 90) for lat, (0, 180) for lon
+    pub minute_thousandths: u16,  // in range (0, 60000). UINT16_MAX = 65535.
     pub sign: Compass,
 }
 
@@ -23,18 +22,17 @@ impl RawCoord {
         assert_eq!(lat_string.len(), 8);
 
         let degrees = lat_string[0..2].parse::<u8>()?;
-        let minutes = lat_string[2..4].parse::<u8>()?;
-        let minutes_fraction = lat_string[4..7].parse::<u16>()?;
+        let minute_thousandths = lat_string[2..7].parse::<u16>()?;
         let sign = match &lat_string[7..8] {
             "N" => Compass::North,
             "S" => Compass::South,
             _ => return Err(ParseError::SyntaxError),
         };
 
-        if degrees > 90 || minutes > 60 || minutes_fraction > 999 {
+        if degrees > 90 || minute_thousandths > 60000 {
             Err(ParseError::NumberOutOfRange)
         } else {
-            Ok(RawCoord { degrees, minutes, minutes_fraction, sign })
+            Ok(RawCoord { degrees, minute_thousandths, sign })
         }
     }
 
@@ -43,18 +41,17 @@ impl RawCoord {
         assert_eq!(lat_string.len(), 9);
 
         let degrees = lat_string[0..3].parse::<u8>()?;
-        let minutes = lat_string[3..5].parse::<u8>()?;
-        let minutes_fraction = lat_string[5..8].parse::<u16>()?;
+        let minute_thousandths = lat_string[3..8].parse::<u16>()?;
         let sign = match &lat_string[8..9] {
             "E" => Compass::East,
             "W" => Compass::West,
             _ => return Err(ParseError::SyntaxError),
         };
 
-        if degrees > 180 || minutes > 60 || minutes_fraction > 999 {
+        if degrees > 180 || minute_thousandths > 60000 {
             Err(ParseError::NumberOutOfRange)
         } else {
-            Ok(RawCoord { degrees, minutes, minutes_fraction, sign })
+            Ok(RawCoord { degrees, minute_thousandths, sign })
         }
     }
 }
@@ -83,16 +80,16 @@ mod test {
     #[test]
     fn raw_coord_parse_lat() {
         assert_eq!(RawCoord::parse_lat("5152265N").unwrap(),
-                   RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, sign: Compass::North });
+                   RawCoord { degrees: 51, minute_thousandths: 52265, sign: Compass::North });
         assert_eq!(RawCoord::parse_lat("5152265S").unwrap(),
-                   RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, sign: Compass::South });
+                   RawCoord { degrees: 51, minute_thousandths: 52265, sign: Compass::South });
     }
 
     #[test]
     fn raw_coord_parse_lon() {
         assert_eq!(RawCoord::parse_lon("05152265E").unwrap(),
-                   RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, sign: Compass::East });
+                   RawCoord { degrees: 51, minute_thousandths: 52265, sign: Compass::East });
         assert_eq!(RawCoord::parse_lon("05152265W").unwrap(),
-                   RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, sign: Compass::West });
+                   RawCoord { degrees: 51, minute_thousandths: 52265, sign: Compass::West });
     }
 }

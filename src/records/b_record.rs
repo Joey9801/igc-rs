@@ -65,8 +65,8 @@ mod test {
         let expected = BRecord {
             timestamp: Time { hours: 9, minutes: 41, seconds: 14 },
             pos: RawPosition {
-                lat: RawCoord { degrees: 51, minutes: 52, minutes_fraction: 265, sign: Compass::North },
-                lon: RawCoord { degrees: 0, minutes: 32, minutes_fraction: 642, sign: Compass::West },
+                lat: RawCoord { degrees: 51, minute_thousandths: 52265, sign: Compass::North },
+                lon: RawCoord { degrees: 0, minute_thousandths: 32642, sign: Compass::West },
             },
             fix_valid: FixValid::Valid,
             pressure_alt: 115,
