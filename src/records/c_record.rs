@@ -3,6 +3,9 @@ use crate::util::coord::RawPosition;
 use crate::util::parse_error::ParseError;
 
 /// The first flavor of C Record - a task record which defines some properties of the whole task.
+///
+/// The IGC specification states that a conforming file containing a task declaration will contain
+/// a CRecordDeclaration, immediately followed (turnpoint_count + 2) CRecordTurnpoints's.
 #[derive(Debug, PartialEq, Eq)]
 pub struct CRecordDeclaration<'a> {
     pub date: Date,
@@ -33,6 +36,7 @@ impl<'a> CRecordDeclaration<'a> {
     }
 }
 
+/// The second flavor of C Record - a start / turn / end point for a task.
 #[derive(Debug, PartialEq, Eq)]
 pub struct CRecordTurnpoint<'a> {
     pub position: RawPosition,
