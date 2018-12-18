@@ -4,11 +4,13 @@ pub mod a_record;
 pub mod b_record;
 pub mod c_record;
 pub mod d_record;
+pub mod e_record;
 
 pub use self::a_record::ARecord;
 pub use self::b_record::BRecord;
 pub use self::c_record::{CRecordDeclaration,CRecordTurnpoint};
 pub use self::d_record::DRecord;
+pub use self::e_record::ERecord;
 
 #[derive(Debug)]
 pub enum Record<'a> {
@@ -17,6 +19,7 @@ pub enum Record<'a> {
     CDeclaration (CRecordDeclaration<'a>),
     CTurnpoint (CRecordTurnpoint<'a>),
     D (DRecord<'a>),
+    E (ERecord<'a>),
     Unrecognised,
 }
 
@@ -36,6 +39,7 @@ impl<'a> Record<'a> {
                 }
             },
             b'D' => Record::D(DRecord::parse(line)?),
+            b'E' => Record::E(ERecord::parse(line)?),
             _ => Record::Unrecognised,
         };
 

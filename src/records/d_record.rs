@@ -31,3 +31,17 @@ impl<'a> DRecord<'a> {
         Ok(DRecord { qualifier, station_id })
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::{GpsQualifier,DRecord};
+
+    #[test]
+    fn drecord_parse() {
+        let example_line = "D1ABCD";
+        let parsed = DRecord::parse(example_line).unwrap();
+        let expected = DRecord { qualifier: GpsQualifier::Gps, station_id: "ABCD" };
+
+        assert_eq!(parsed, expected);
+    }
+}
