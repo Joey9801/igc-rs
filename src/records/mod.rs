@@ -3,10 +3,12 @@ use crate::util::parse_error::ParseError;
 pub mod a_record;
 pub mod b_record;
 pub mod c_record;
+pub mod d_record;
 
 pub use self::a_record::ARecord;
 pub use self::b_record::BRecord;
 pub use self::c_record::{CRecordDeclaration,CRecordTurnpoint};
+pub use self::d_record::DRecord;
 
 #[derive(Debug)]
 pub enum Record<'a> {
@@ -14,6 +16,7 @@ pub enum Record<'a> {
     B (BRecord),
     CDeclaration (CRecordDeclaration<'a>),
     CTurnpoint (CRecordTurnpoint<'a>),
+    D (DRecord<'a>),
     Unrecognised,
 }
 
@@ -32,6 +35,7 @@ impl<'a> Record<'a> {
                     Record::CDeclaration(CRecordDeclaration::parse(line)?)
                 }
             },
+            b'D' => Record::D(DRecord::parse(line)?),
             _ => Record::Unrecognised,
         };
 
