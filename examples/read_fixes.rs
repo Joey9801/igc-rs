@@ -1,6 +1,8 @@
 extern crate igc_rs;
 extern crate memmap;
 
+use igc_rs::{IgcFile, records::Record};
+
 use std::fs::File;
 
 use memmap::MmapOptions;
@@ -10,10 +12,10 @@ fn main() {
 
     let file = File::open(filename).unwrap();
     let mmap = unsafe { MmapOptions::new().map(&file) }.unwrap();
-    let igc_file = igc_rs::IgcFile::parse_bytes(mmap.as_ref()).unwrap();
+    let igc_file = IgcFile::parse_bytes(mmap.as_ref()).unwrap();
 
     for record in igc_file.records {
-        if let igc_rs::Record::B(b_rec) = record {
+        if let Record::B(b_rec) = record {
             println!("b_rec = {:?}", b_rec);
         }
     }

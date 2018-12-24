@@ -1,9 +1,8 @@
-mod util;
-pub use self::util::parse_error::ParseError;
-pub use self::util::datetime::{Date,Time};
+pub mod util;
+use self::util::ParseError;
 
-mod records;
-pub use self::records::*;
+pub mod records;
+use self::records::*;
 
 
 /// Closely represents a parsed IGC file, with minimal post-processing

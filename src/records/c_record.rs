@@ -5,7 +5,8 @@ use crate::util::parse_error::ParseError;
 /// The first flavor of C Record - a task record which defines some properties of the whole task.
 ///
 /// The IGC specification states that a conforming file containing a task declaration will contain
-/// a CRecordDeclaration, immediately followed (turnpoint_count + 2) CRecordTurnpoints's.
+/// a CRecordDeclaration, immediately followed (turnpoint_count + 4) CRecordTurnpoints's.
+/// The extra 4 turnpoints are for the takeoff/land locations, and the task start/finish locations
 #[derive(Debug, PartialEq, Eq)]
 pub struct CRecordDeclaration<'a> {
     pub date: Date,

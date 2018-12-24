@@ -30,7 +30,7 @@ impl BRecord {
     ///
     /// ```
     /// # extern crate igc_rs;
-    /// # use igc_rs::{ BRecord, Time };
+    /// # use igc_rs::{ records::BRecord, util::Time };
     /// let record = BRecord::parse("B0941145152265N00032642WA00115").unwrap();
     /// assert_eq!(record.timestamp, Time::from_hms(9, 41, 14));
     /// ```
