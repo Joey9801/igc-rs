@@ -1,5 +1,7 @@
 use crate::util::parse_error::ParseError;
 
+mod extension;
+
 mod a_record;
 mod b_record;
 mod c_record;
@@ -8,6 +10,7 @@ mod e_record;
 mod f_record;
 mod g_record;
 mod h_record;
+mod i_record;
 
 pub use self::a_record::*;
 pub use self::b_record::BRecord;
@@ -17,6 +20,7 @@ pub use self::e_record::ERecord;
 pub use self::f_record::FRecord;
 pub use self::g_record::GRecord;
 pub use self::h_record::HRecord;
+pub use self::i_record::IRecord;
 
 #[derive(Debug)]
 pub enum Record<'a> {
@@ -29,6 +33,7 @@ pub enum Record<'a> {
     F (FRecord<'a>),
     G (GRecord<'a>),
     H (HRecord<'a>),
+    I (IRecord<'a>),
     Unrecognised,
 }
 
@@ -52,6 +57,7 @@ impl<'a> Record<'a> {
             b'F' => Record::F(FRecord::parse(line)?),
             b'G' => Record::G(GRecord::parse(line)?),
             b'H' => Record::H(HRecord::parse(line)?),
+            b'I' => Record::I(IRecord::parse(line)?),
             _ => Record::Unrecognised,
         };
 

@@ -45,7 +45,7 @@ impl<'a> HRecord<'a> {
             data = &line[5..];
         }
 
-        return Ok(Self { data_source, mnemonic, friendly_name, data });
+        Ok(Self { data_source, mnemonic, friendly_name, data })
     }
 }
 
