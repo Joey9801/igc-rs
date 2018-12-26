@@ -14,10 +14,22 @@ pub struct CRecordDeclaration<'a> {
     pub flight_date: Date,
     pub task_id: u16,
     pub turnpoint_count: u8,
-    pub name: Option<&'a str>,
+    pub task_name: Option<&'a str>,
 }
 
 impl<'a> CRecordDeclaration<'a> {
+    /// Parse a string as a C record task declaration
+    ///
+    /// ```
+    /// # extern crate igc_rs;
+    /// # use igc_rs::{ records::CRecordDeclaration, util::{Time,Date} };
+    /// let record = CRecordDeclaration::parse("C230718092044000000000204Foo task").unwrap();
+    /// assert_eq!(record.date, Date::from_dmy(23, 7, 2018));
+    /// assert_eq!(record.time, Time::from_hms(9, 20, 44));
+    /// assert_eq!(record.task_id, 2);
+    /// assert_eq!(record.turnpoint_count, 4);
+    /// assert_eq!(record.task_name, Some("Foo task"));
+    /// ```
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
         assert!(line.len() >= 25);
         assert!(line.as_bytes()[0] == b'C');
@@ -27,13 +39,13 @@ impl<'a> CRecordDeclaration<'a> {
         let flight_date = Date::parse(&line[13..19])?;
         let task_id = line[19..23].parse::<u16>()?;
         let turnpoint_count = line[23..25].parse::<u8>()?;
-        let name = if line.len() > 25 {
+        let task_name = if line.len() > 25 {
             Some(&line[25..])
         } else {
             None
         };
 
-        Ok(CRecordDeclaration { date, time, flight_date, task_id, turnpoint_count, name })
+        Ok(CRecordDeclaration { date, time, flight_date, task_id, turnpoint_count, task_name })
     }
 }
 
@@ -41,22 +53,34 @@ impl<'a> CRecordDeclaration<'a> {
 #[derive(Debug, PartialEq, Eq)]
 pub struct CRecordTurnpoint<'a> {
     pub position: RawPosition,
-    pub name: Option<&'a str>,
+    pub turnpoint_name: Option<&'a str>,
 }
 
 impl<'a> CRecordTurnpoint<'a> {
+    /// Parse a string as a C record task turnpoint
+    ///
+    /// ```
+    /// # extern crate igc_rs;
+    /// # use igc_rs::{ records::CRecordTurnpoint, util::{Compass,RawCoord} };
+    /// let record = CRecordTurnpoint::parse("C5156040N00038120WLBZ-Leighton Buzzard NE").unwrap();
+    /// assert_eq!(record.position.lat,
+    ///            RawCoord { degrees: 51, minute_thousandths: 56040, sign: Compass::North });
+    /// assert_eq!(record.position.lon,
+    ///            RawCoord { degrees: 0, minute_thousandths: 38120, sign: Compass::West });
+    /// assert_eq!(record.turnpoint_name, Some("LBZ-Leighton Buzzard NE"));
+    /// ```
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
         assert!(line.len() >= 18);
         assert!(line.as_bytes()[0] == b'C');
 
         let position = RawPosition::parse_lat_lon(&line[1..18])?;
-        let name = if line.len() > 18 {
+        let turnpoint_name = if line.len() > 18 {
             Some(&line[18..])
         } else {
             None
         };
 
-        Ok(CRecordTurnpoint { position, name })
+        Ok(CRecordTurnpoint { position, turnpoint_name })
     }
 }
 
@@ -76,13 +100,13 @@ mod tests {
             flight_date: Date { day: 00, month: 00, year: 2000 },
             task_id: 2,
             turnpoint_count: 4,
-            name: Some("Foo task")
+            task_name: Some("Foo task")
         };
         assert_eq!(parsed_declaration, expected);
 
         let sample_string = "C230718092044000000000204";
         let parsed_declaration = CRecordDeclaration::parse(sample_string).unwrap();
-        expected.name = None;
+        expected.task_name = None;
         assert_eq!(parsed_declaration, expected);
 
     }
@@ -96,7 +120,7 @@ mod tests {
                 lat: RawCoord { degrees: 51, minute_thousandths: 56040, sign: Compass::North },
                 lon: RawCoord { degrees: 0, minute_thousandths: 38120, sign: Compass::West },
             },
-            name: Some("LBZ-Leighton Buzzard NE"),
+            turnpoint_name: Some("LBZ-Leighton Buzzard NE"),
         };
 
         assert_eq!(parsed_turnpoint, expected);

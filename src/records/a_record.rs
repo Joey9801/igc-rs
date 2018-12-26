@@ -67,7 +67,7 @@ impl Manufacturer {
 }
 
 
-/// Represents a single parsed IGC file A Record.
+/// Represents the FVU ID record
 #[derive(Debug, PartialEq, Eq)]
 pub struct ARecord<'a> {
     pub manufacturer: Manufacturer,

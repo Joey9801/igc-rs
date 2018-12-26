@@ -11,9 +11,9 @@ pub enum FixValid {
     NavWarning,
 }
 
-/// Closely represents a parsed IGC B-Record with minimal post-processing
+/// A Fix record
 ///
-/// Only the fields for { timestamp, lat, lon, fix_valid, pressure_altitude } are stored.
+/// Only the fields for { timestamp, lat, lon, fix_valid, pressure_altitude, gps_altitude} are stored.
 /// Any/all other fields are optional and defined in an I Record, and are not hanled yet.
 ///
 /// The type for the altitudes doesn't techincally cover the complete range of representable
