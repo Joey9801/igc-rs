@@ -2,6 +2,9 @@ use crate::util::datetime::Time;
 use crate::util::parse_error::ParseError;
 use records::extension::Extendable;
 
+/// An extension data record.
+///
+/// Contains only a timestamp by default, but can be extended with a J record.
 #[derive(Debug, PartialEq, Eq)]
 pub struct KRecord<'a> {
     pub time: Time,

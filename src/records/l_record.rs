@@ -1,5 +1,6 @@
 use crate::util::parse_error::ParseError;
 
+/// A simple plaintext log, used by some manufacturers for propietary extensions.
 #[derive(Debug, PartialEq, Eq)]
 pub struct LRecord<'a> {
     pub log_string: &'a str,

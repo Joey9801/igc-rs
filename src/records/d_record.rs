@@ -7,6 +7,7 @@ pub enum GpsQualifier {
     DGps,
 }
 
+/// Differential GPS record - indicates that Differential GPS is being used.
 #[derive(Debug, PartialEq, Eq)]
 pub struct DRecord<'a> {
     pub qualifier: GpsQualifier,

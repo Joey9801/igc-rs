@@ -1,5 +1,6 @@
 use crate::util::parse_error::ParseError;
 
+/// Enumeration of the different sources an H record can come from.
 #[derive(Debug, PartialEq, Eq)]
 pub enum DataSource {
     FVU,
@@ -8,12 +9,13 @@ pub enum DataSource {
     Unrecognized(u8),
 }
 
+/// A header information record.
 #[derive(Debug, PartialEq, Eq)]
 pub struct HRecord<'a> {
-    data_source: DataSource,
-    mnemonic: &'a str,
-    friendly_name: Option<&'a str>,
-    data: &'a str,
+    pub data_source: DataSource,
+    pub mnemonic: &'a str,
+    pub friendly_name: Option<&'a str>,
+    pub data: &'a str,
 }
 
 impl DataSource {

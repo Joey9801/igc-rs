@@ -1,6 +1,10 @@
 use crate::util::parse_error::ParseError; 
 use std::str;
 
+/// Defines a generic record extension, as appears in I and J records.
+///
+/// The start and end bytes are defined as being 1-indexed including the initial record type
+/// discrimination character.
 #[derive(Debug, PartialEq, Eq)]
 pub struct Extension<'a> {
     pub start_byte: u8,
@@ -11,6 +15,13 @@ pub struct Extension<'a> {
 impl<'a> Extension<'a> {
     pub const STRING_LENGTH: usize = 7;
 
+    /// Parse an single extension definition string.
+    ///
+    /// Expected format:
+    ///     SSEEMMM
+    /// SS  - start byte - 0-9
+    /// EE  - end byte   - 0-9
+    /// MMM - mnemonic   - 0-9 a-z A-Z
     pub fn parse(string: &'a str) -> Result<Self, ParseError> {
         assert_eq!(string.len(), 7);
 
@@ -27,11 +38,13 @@ impl<'a> Extension<'a> {
     }
 }
 
+/// Implemented by records which support having extensions
 pub trait Extendable {
     const BASE_LENGTH: usize;
 
     fn extension_string<'a>(&'a self) -> &'a str;
 
+    /// Get a given extension from the record implementing this trait.
     fn get_extension<'a, 'b>(&'a self, extension: &'b Extension<'a>) -> Result<&'a str, ParseError> {
         if (extension.start_byte as usize) < Self::BASE_LENGTH {
             return Err(ParseError::BadExtension);
@@ -51,6 +64,7 @@ pub trait Extendable {
     }
 }
 
+/// A record defining a set of extensions (either an I or a J record)
 #[derive(Debug, PartialEq, Eq)]
 pub struct ExtensionDefRecord<'a> {
     pub num_extensions: u8,
@@ -58,6 +72,7 @@ pub struct ExtensionDefRecord<'a> {
 }
 
 impl<'a> ExtensionDefRecord<'a> {
+    /// Parse either kind of extension definition records (either I or J)
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
         let first_byte = line.as_bytes()[0];
         assert!(first_byte == b'I' || first_byte == b'J');

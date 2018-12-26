@@ -1,5 +1,6 @@
 use super::parse_error::*;
 
+/// Enumeration of cardinal directions
 #[derive(Debug, Eq, PartialEq)]
 pub enum Compass {
     North,
@@ -8,7 +9,7 @@ pub enum Compass {
     West,
 }
 
-/// Represents a raw coordinate, as it appears in an IGC file.
+/// Represents a latitude OR longitude, closely representing the form used in IGC files.
 #[derive(Debug, PartialEq, Eq)]
 pub struct RawCoord {
     pub degrees: u8,              // in range (0, 90) for lat, (0, 180) for lon
@@ -56,6 +57,7 @@ impl RawCoord {
     }
 }
 
+/// A raw lat/lon pair.
 #[derive(Debug, PartialEq, Eq)]
 pub struct RawPosition {
     pub lat: RawCoord,

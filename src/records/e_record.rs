@@ -3,7 +3,9 @@ use crate::util::{
     datetime::Time,
 };
 
-/// Describes an event logged during the flight, associated with the B Record immediately following
+/// Describes an event logged during the flight, associated with the B Record immediately
+/// following.
+///
 /// An official Event needs a B Record with the same timestamp.
 #[derive(Debug, PartialEq, Eq)]
 pub struct ERecord<'a> {

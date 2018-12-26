@@ -1,6 +1,8 @@
 use crate::util::parse_error::ParseError;
 
-/// Represents a single G Record (security)
+/// A security record.
+///
+/// The contents of the record are vendor dependent.
 #[derive(Debug, PartialEq, Eq)]
 pub struct GRecord<'a> {
     pub data: &'a str,
