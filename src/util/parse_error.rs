@@ -8,6 +8,8 @@ pub enum ParseError {
     Utf8Error(std::str::Utf8Error),
     SyntaxError,
     NumberOutOfRange,
+    BadExtension,
+    MissingExtension,
 }
 
 impl From<num::ParseIntError> for ParseError {

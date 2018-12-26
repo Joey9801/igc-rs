@@ -17,12 +17,12 @@ impl<'a> IRecord<'a> {
 
         let num_extensions = line[1..3].parse::<u8>()?;
 
-        if line.len() != 3 + (7 * num_extensions) as usize {
+        if line.len() != 3 + (Extension::STRING_LENGTH * num_extensions as usize) {
             return Err(ParseError::SyntaxError);
         }
 
         let extensions = line[3..].as_bytes()
-            .chunks(7)
+            .chunks(Extension::STRING_LENGTH)
             .map(unsafe { |buf| str::from_utf8_unchecked(buf) })
             .map(Extension::parse)
             .collect::<Result<Vec<_>, _>>()?;

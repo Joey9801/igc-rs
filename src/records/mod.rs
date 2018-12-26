@@ -25,7 +25,7 @@ pub use self::i_record::IRecord;
 #[derive(Debug)]
 pub enum Record<'a> {
     A (ARecord<'a>),
-    B (BRecord),
+    B (BRecord<'a>),
     CDeclaration (CRecordDeclaration<'a>),
     CTurnpoint (CRecordTurnpoint<'a>),
     D (DRecord<'a>),
