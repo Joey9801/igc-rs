@@ -4,7 +4,7 @@ use crate::util::{
 };
 
 
-/// Represents a single parsed F Record (Sattelite constellation)
+/// Represents a single parsed F Record (Satellite constellation)
 #[derive(Debug, PartialEq, Eq)]
 pub struct FRecord<'a> {
     pub time: Time,
