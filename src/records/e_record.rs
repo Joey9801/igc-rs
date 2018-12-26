@@ -31,7 +31,7 @@ impl<'a> ERecord<'a> {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::ERecord;
     use crate::util::datetime::Time;
 

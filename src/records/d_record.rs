@@ -33,7 +33,7 @@ impl<'a> DRecord<'a> {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::{GpsQualifier,DRecord};
 
     #[test]

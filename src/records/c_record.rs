@@ -62,7 +62,7 @@ impl<'a> CRecordTurnpoint<'a> {
 
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::{*};
     use crate::util::coord::{Compass,RawCoord,RawPosition};
 

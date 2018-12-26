@@ -103,7 +103,7 @@ impl<'a> ARecord<'a> {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::{ARecord,Manufacturer};
 
     #[test]

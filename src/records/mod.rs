@@ -1,6 +1,7 @@
-use crate::util::parse_error::ParseError;
+#![feature(test)]
+extern crate test;
 
-mod extension;
+use crate::util::parse_error::ParseError;
 
 mod a_record;
 mod b_record;
@@ -10,7 +11,8 @@ mod e_record;
 mod f_record;
 mod g_record;
 mod h_record;
-mod i_record;
+mod extension;
+
 
 pub use self::a_record::*;
 pub use self::b_record::BRecord;
@@ -20,7 +22,7 @@ pub use self::e_record::ERecord;
 pub use self::f_record::FRecord;
 pub use self::g_record::GRecord;
 pub use self::h_record::HRecord;
-pub use self::i_record::IRecord;
+pub use self::extension::{ExtensionDefRecord,Extension,Extendable};
 
 #[derive(Debug)]
 pub enum Record<'a> {
@@ -33,7 +35,8 @@ pub enum Record<'a> {
     F (FRecord<'a>),
     G (GRecord<'a>),
     H (HRecord<'a>),
-    I (IRecord<'a>),
+    I (ExtensionDefRecord<'a>),
+    J (ExtensionDefRecord<'a>),
     Unrecognised,
 }
 
@@ -57,7 +60,8 @@ impl<'a> Record<'a> {
             b'F' => Record::F(FRecord::parse(line)?),
             b'G' => Record::G(GRecord::parse(line)?),
             b'H' => Record::H(HRecord::parse(line)?),
-            b'I' => Record::I(IRecord::parse(line)?),
+            b'I' => Record::I(ExtensionDefRecord::parse(line)?),
+            b'J' => Record::J(ExtensionDefRecord::parse(line)?),
             _ => Record::Unrecognised,
         };
 
@@ -66,7 +70,7 @@ impl<'a> Record<'a> {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     #[test]
     fn parse_record_line() {
         let rec = super::Record::parse_line("ACIdStrFoo").unwrap();

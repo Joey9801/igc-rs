@@ -1,7 +1,8 @@
 use crate::util::datetime::Time;
 use crate::util::coord::RawPosition;
 use crate::util::parse_error::ParseError;
-use records::extension::{Extension,Extendable};
+use records::extension::Extendable;
+
 
 /// Possible values for the "fix valid" field of a B Record
 #[derive(Debug, PartialEq, Eq)]
@@ -67,11 +68,12 @@ impl<'a> Extendable for BRecord<'a> {
 
 
 #[cfg(test)]
-mod test {
+mod tests {
+    use super::*;
+
     use crate::util::datetime::Time;
     use crate::util::coord::{Compass,RawCoord,RawPosition};
-
-    use super::*;
+    use records::extension::Extension;
 
     #[test]
     fn simple_brecord_parse() {

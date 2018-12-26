@@ -63,7 +63,7 @@ impl<'a> Iterator for SatelliteArrayIter<'a> {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]
