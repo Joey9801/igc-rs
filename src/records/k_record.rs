@@ -4,7 +4,7 @@ use records::extension::Extendable;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct KRecord<'a> {
-    time: Time,
+    pub time: Time,
     extension_string: &'a str,
 }
 

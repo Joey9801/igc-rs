@@ -10,6 +10,7 @@ mod g_record;
 mod h_record;
 mod extension;
 mod k_record;
+mod l_record;
 
 
 pub use self::a_record::*;
@@ -22,6 +23,7 @@ pub use self::g_record::GRecord;
 pub use self::h_record::HRecord;
 pub use self::extension::{ExtensionDefRecord,Extension,Extendable};
 pub use self::k_record::KRecord;
+pub use self::l_record::LRecord;
 
 #[derive(Debug)]
 pub enum Record<'a> {
@@ -37,7 +39,8 @@ pub enum Record<'a> {
     I (ExtensionDefRecord<'a>),
     J (ExtensionDefRecord<'a>),
     K (KRecord<'a>),
-    Unrecognised,
+    L (LRecord<'a>),
+    Unrecognised (&'a str),
 }
 
 impl<'a> Record<'a> {
@@ -63,7 +66,8 @@ impl<'a> Record<'a> {
             b'I' => Record::I(ExtensionDefRecord::parse(line)?),
             b'J' => Record::J(ExtensionDefRecord::parse(line)?),
             b'K' => Record::K(KRecord::parse(line)?),
-            _ => Record::Unrecognised,
+            b'L' => Record::L(LRecord::parse(line)?),
+            _ => Record::Unrecognised(line),
         };
 
         Ok(rec)
