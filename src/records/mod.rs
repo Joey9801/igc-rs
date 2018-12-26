@@ -1,6 +1,3 @@
-#![feature(test)]
-extern crate test;
-
 use crate::util::parse_error::ParseError;
 
 mod a_record;
@@ -12,6 +9,7 @@ mod f_record;
 mod g_record;
 mod h_record;
 mod extension;
+mod k_record;
 
 
 pub use self::a_record::*;
@@ -23,6 +21,7 @@ pub use self::f_record::FRecord;
 pub use self::g_record::GRecord;
 pub use self::h_record::HRecord;
 pub use self::extension::{ExtensionDefRecord,Extension,Extendable};
+pub use self::k_record::KRecord;
 
 #[derive(Debug)]
 pub enum Record<'a> {
@@ -37,6 +36,7 @@ pub enum Record<'a> {
     H (HRecord<'a>),
     I (ExtensionDefRecord<'a>),
     J (ExtensionDefRecord<'a>),
+    K (KRecord<'a>),
     Unrecognised,
 }
 
@@ -62,6 +62,7 @@ impl<'a> Record<'a> {
             b'H' => Record::H(HRecord::parse(line)?),
             b'I' => Record::I(ExtensionDefRecord::parse(line)?),
             b'J' => Record::J(ExtensionDefRecord::parse(line)?),
+            b'K' => Record::K(KRecord::parse(line)?),
             _ => Record::Unrecognised,
         };
 
