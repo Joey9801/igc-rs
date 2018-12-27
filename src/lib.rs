@@ -1,4 +1,4 @@
-//! This create provides a minimal, fast parser for IGC files.
+//! This crate provides a minimal, fast parser for IGC files.
 //!
 //! The low level record parser mirrors the raw format of an IGC file closely, and works to
 //! minimize the number of heap allocations made during parsing.
