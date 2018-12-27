@@ -9,3 +9,4 @@ path = "examples/read_fixes.rs"
 
 [dependencies]
 memmap = "0.7.0"
+arrayvec = "0.4.10"

@@ -1,11 +1,13 @@
 use crate::util::parse_error::ParseError; 
 use std::str;
 
+use arrayvec::ArrayVec;
+
 /// Defines a generic record extension, as appears in I and J records.
 ///
 /// The start and end bytes are defined as being 1-indexed including the initial record type
 /// discrimination character.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Extension<'a> {
     pub start_byte: u8,
     pub end_byte: u8,
@@ -68,7 +70,7 @@ pub trait Extendable {
 #[derive(Debug, PartialEq, Eq)]
 pub struct ExtensionDefRecord<'a> {
     pub num_extensions: u8,
-    pub extensions: Vec<Extension<'a>>,
+    pub extensions: ArrayVec<[Extension<'a>; 100]>,
 }
 
 impl<'a> ExtensionDefRecord<'a> {
@@ -91,7 +93,7 @@ impl<'a> ExtensionDefRecord<'a> {
             .chunks(Extension::STRING_LENGTH)
             .map(unsafe { |buf| str::from_utf8_unchecked(buf) })
             .map(Extension::parse)
-            .collect::<Result<Vec<_>, _>>()?;
+            .collect::<Result<ArrayVec<[_; 100]>, _>>()?;
 
         Ok(Self { num_extensions, extensions } )
     }
@@ -107,11 +109,11 @@ mod tests {
         let parsed_record = ExtensionDefRecord::parse(sample_string).unwrap();
         let expected = ExtensionDefRecord {
             num_extensions: 3,
-            extensions: vec![
+            extensions: [
                 Extension { mnemonic: "FXA", start_byte: 36, end_byte: 38 },
                 Extension { mnemonic: "ENL", start_byte: 39, end_byte: 41 },
                 Extension { mnemonic: "TAS", start_byte: 42, end_byte: 46 },
-            ]
+            ].iter().cloned().collect()
         };
 
         assert_eq!(parsed_record, expected);

@@ -1,8 +1,10 @@
+extern crate arrayvec;
+
 pub mod util;
 use self::util::ParseError;
 
 pub mod records;
-use self::records::*;
+pub use self::records::*;
 
 
 /// Closely represents a parsed IGC file, with minimal post-processing
