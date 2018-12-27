@@ -1,5 +1,4 @@
 use std::str;
-use arrayvec::ArrayVec;
 use crate::util::ParseError; 
 
 
@@ -46,7 +45,7 @@ impl<'a> Extension<'a> {
 pub trait Extendable {
     const BASE_LENGTH: usize;
 
-    fn extension_string<'a>(&'a self) -> &'a str;
+    fn extension_string(&self) -> &str;
 
     /// Get a given extension from the record implementing this trait.
     fn get_extension<'a, 'b>(&'a self, extension: &'b Extension<'a>) -> Result<&'a str, ParseError> {
@@ -72,7 +71,7 @@ pub trait Extendable {
 #[derive(Debug, PartialEq, Eq)]
 pub struct ExtensionDefRecord<'a> {
     pub num_extensions: u8,
-    pub extensions: ArrayVec<[Extension<'a>; 100]>,
+    pub extensions: Vec<Extension<'a>>,
 }
 
 impl<'a> ExtensionDefRecord<'a> {
@@ -95,7 +94,7 @@ impl<'a> ExtensionDefRecord<'a> {
             .chunks(Extension::STRING_LENGTH)
             .map(unsafe { |buf| str::from_utf8_unchecked(buf) })
             .map(Extension::parse)
-            .collect::<Result<ArrayVec<[_; 100]>, _>>()?;
+            .collect::<Result<_, _>>()?;
 
         Ok(Self { num_extensions, extensions } )
     }
@@ -111,11 +110,11 @@ mod tests {
         let parsed_record = ExtensionDefRecord::parse(sample_string).unwrap();
         let expected = ExtensionDefRecord {
             num_extensions: 3,
-            extensions: [
+            extensions: vec![
                 Extension { mnemonic: "FXA", start_byte: 36, end_byte: 38 },
                 Extension { mnemonic: "ENL", start_byte: 39, end_byte: 41 },
                 Extension { mnemonic: "TAS", start_byte: 42, end_byte: 46 },
-            ].iter().cloned().collect()
+            ]
         };
 
         assert_eq!(parsed_record, expected);

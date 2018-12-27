@@ -3,8 +3,5 @@ name = "igc"
 version = "0.1.0"
 authors = ["Joe Roberts <joe@jwjr.co.uk>"]
 
-[dependencies]
-arrayvec = "0.4.10"
-
 [dev-dependencies]
 memmap = "0.7.0"

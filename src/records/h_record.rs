@@ -39,7 +39,7 @@ impl<'a> HRecord<'a> {
 
         let friendly_name;
         let data;
-        if let Some(colon_idx) = line.find(":") {
+        if let Some(colon_idx) = line.find(':') {
             friendly_name = Some(&line[5..colon_idx]);
             data = &line[colon_idx+1..];
         } else {

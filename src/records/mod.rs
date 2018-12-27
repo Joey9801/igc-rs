@@ -65,8 +65,6 @@ pub enum Record<'a> {
 impl<'a> Record<'a> {
     /// Perform a minimal parsing of a single IGC file line.
     ///
-    /// This function is guaranteed not to allocate on the heap.
-    ///
     /// ```
     /// # extern crate igc;
     /// use igc::records::{Record,DataSource};
