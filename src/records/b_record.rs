@@ -1,6 +1,4 @@
-use crate::util::datetime::Time;
-use crate::util::coord::RawPosition;
-use crate::util::parse_error::ParseError;
+use crate::util::{Time,RawPosition,ParseError};
 use records::extension::Extendable;
 
 
@@ -33,13 +31,16 @@ impl<'a> BRecord<'a> {
     /// Parse an IGC B record string.
     ///
     /// ```
-    /// # extern crate igc_rs;
-    /// # use igc_rs::{ records::BRecord, util::Time };
+    /// # extern crate igc;
+    /// # use igc::{ records::BRecord, util::Time };
     /// let record = BRecord::parse("B0941145152265N00032642WA0011500115").unwrap();
     /// assert_eq!(record.timestamp, Time::from_hms(9, 41, 14));
     /// ```
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
-        assert!(line.len() >= Self::BASE_LENGTH);
+        if line.len() < Self::BASE_LENGTH {
+            return Err(ParseError::SyntaxError);
+        }
+
         let timestamp = Time::parse(&line[1..7])?;
         let pos = RawPosition::parse_lat_lon(&line[7..24])?;
 
@@ -71,8 +72,7 @@ impl<'a> Extendable for BRecord<'a> {
 mod tests {
     use super::*;
 
-    use crate::util::datetime::Time;
-    use crate::util::coord::{Compass,RawCoord,RawPosition};
+    use crate::util::{Time,Compass,RawCoord,RawPosition};
     use records::extension::Extension;
 
     #[test]

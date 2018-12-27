@@ -1,7 +1,4 @@
-use crate::util::{
-    datetime::Time,
-    parse_error::ParseError
-};
+use crate::util::{Time,ParseError};
 
 
 /// A record indicating a change in the satellite constellation being used.
@@ -13,7 +10,9 @@ pub struct FRecord<'a> {
 
 impl<'a> FRecord<'a> {
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
-        assert!(line.len() >= 7);
+        if line.len() < 7 {
+            return Err(ParseError::SyntaxError);
+        }
 
         let time = Time::parse(&line[1..7])?;
 

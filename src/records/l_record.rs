@@ -1,4 +1,4 @@
-use crate::util::parse_error::ParseError;
+use crate::util::ParseError;
 
 /// A simple plaintext log, used by some manufacturers for propietary extensions.
 #[derive(Debug, PartialEq, Eq)]

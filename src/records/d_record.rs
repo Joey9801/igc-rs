@@ -1,4 +1,4 @@
-use crate::util::parse_error::ParseError;
+use crate::util::ParseError;
 
 
 #[derive(Debug, PartialEq, Eq)]
@@ -16,7 +16,9 @@ pub struct DRecord<'a> {
 
 impl<'a> DRecord<'a> {
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
-        assert_eq!(line.len(), 6);
+        if line.len() != 6 {
+            return Err(ParseError::SyntaxError);
+        }
 
         let bytes = line.as_bytes();
         assert_eq!(bytes[0], b'D');

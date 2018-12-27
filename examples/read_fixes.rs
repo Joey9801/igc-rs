@@ -1,20 +1,22 @@
-extern crate igc_rs;
+extern crate igc;
 extern crate memmap;
 
-use igc_rs::{IgcFile, records::Record};
-
 use std::fs::File;
-
 use memmap::MmapOptions;
+use igc::records::Record;
 
 fn main() {
     let filename = "examples/example.igc";
 
     let file = File::open(filename).unwrap();
     let mmap = unsafe { MmapOptions::new().map(&file) }.unwrap();
-    let igc_file = IgcFile::parse_bytes(mmap.as_ref()).unwrap();
 
-    for record in igc_file.records {
+    for line in std::str::from_utf8(&mmap).unwrap().lines() {
+        let record = match Record::parse_line(line) {
+            Ok(record) => record,
+            Err(_) => std::process::exit(-1),
+        };
+
         if let Record::B(b_rec) = record {
             println!("b_rec = {:?}", b_rec);
         }

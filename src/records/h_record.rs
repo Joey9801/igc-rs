@@ -1,4 +1,4 @@
-use crate::util::parse_error::ParseError;
+use crate::util::ParseError;
 
 /// Enumeration of the different sources an H record can come from.
 #[derive(Debug, PartialEq, Eq)]

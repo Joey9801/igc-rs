@@ -1,4 +1,4 @@
-use crate::util::parse_error::ParseError;
+use crate::util::ParseError;
 
 // The A Record has to be the first record in an FVU Data File.
 // The flight verification unit identification record specifies the unique number of the equipment
@@ -79,16 +79,19 @@ impl<'a> ARecord<'a> {
     /// Parse an IGC A Record string
     ///
     /// ```
-    /// # extern crate igc_rs;
-    /// # use igc_rs::records::{ ARecord, Manufacturer };
+    /// # extern crate igc;
+    /// # use igc::records::{ ARecord, Manufacturer };
     /// let record = ARecord::parse("ACWhizzASDF").unwrap();
     /// assert_eq!(record.manufacturer, Manufacturer::Cambridge);
     /// assert_eq!(record.unique_id, "Whizz");
     /// assert_eq!(record.id_extension, Some("ASDF"));
     /// ```
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
-        assert!(line.len() >= 7);
         assert_eq!(&line[0..1], "A");
+
+        if line.len() < 7 {
+            return Err(ParseError::SyntaxError);
+        }
 
         let manufacturer = Manufacturer::parse_code(line.as_bytes()[1]);
         let unique_id = &line[2..7];

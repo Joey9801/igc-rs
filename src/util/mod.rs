@@ -1,6 +1,8 @@
-pub mod parse_error;
-pub mod coord;
-pub mod datetime;
+//! General utility structures and functions
+
+mod parse_error;
+mod coord;
+mod datetime;
 
 pub use self::parse_error::ParseError;
 pub use self::coord::{RawPosition,RawCoord,Compass};

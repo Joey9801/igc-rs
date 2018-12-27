@@ -1,12 +1,10 @@
 [package]
-name = "igc-rs"
+name = "igc"
 version = "0.1.0"
 authors = ["Joe Roberts <joe@jwjr.co.uk>"]
 
-[[bin]]
-name = "read_fixes_example"
-path = "examples/read_fixes.rs"
-
 [dependencies]
-memmap = "0.7.0"
 arrayvec = "0.4.10"
+
+[dev-dependencies]
+memmap = "0.7.0"

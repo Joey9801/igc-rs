@@ -1,26 +1,10 @@
+//! # IGC
+//! This is a small crate providing a minimal, fast parser for IGC files.
+//! The low level record parser mirrors the raw format of an IGC file closely, and guarantees that
+//! no heap allocations will be made during parsing. It is intended to be used as an unopinionated
+//! base for building higher level data structures representing flights.
+
 extern crate arrayvec;
 
 pub mod util;
-use self::util::ParseError;
-
 pub mod records;
-pub use self::records::*;
-
-
-/// Closely represents a parsed IGC file, with minimal post-processing
-pub struct IgcFile<'a> {
-    pub records: Vec<Record<'a>>
-}
-
-impl<'a> IgcFile<'a> {
-    /// Parse a slice of bytes as a 
-    pub fn parse_bytes(bytes: &'a [u8]) -> Result<Self, ParseError> {
-        let mut records : Vec<Record> = Vec::new();
-
-        for line in std::str::from_utf8(bytes)?.lines() {
-            records.push(Record::parse_line(line)?);
-        }
-
-        Ok(IgcFile { records })
-    }
-}

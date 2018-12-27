@@ -1,7 +1,7 @@
-use crate::util::parse_error::ParseError; 
 use std::str;
-
 use arrayvec::ArrayVec;
+use crate::util::ParseError; 
+
 
 /// Defines a generic record extension, as appears in I and J records.
 ///
@@ -25,7 +25,9 @@ impl<'a> Extension<'a> {
     /// EE  - end byte   - 0-9
     /// MMM - mnemonic   - 0-9 a-z A-Z
     pub fn parse(string: &'a str) -> Result<Self, ParseError> {
-        assert_eq!(string.len(), 7);
+        if string.len() != 7 {
+            return Err(ParseError::SyntaxError);
+        }
 
         let start_byte = string[0..2].parse::<u8>()?;
         let end_byte = string[2..4].parse::<u8>()?;

@@ -1,7 +1,4 @@
-use crate::util::{
-    parse_error::ParseError,
-    datetime::Time,
-};
+use crate::util::{ParseError,Time};
 
 /// Describes an event logged during the flight, associated with the B Record immediately
 /// following.
@@ -16,7 +13,10 @@ pub struct ERecord<'a> {
 
 impl<'a> ERecord<'a> {
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
-        assert!(line.len() >= 10);
+        if line.len() < 10 {
+            return Err(ParseError::SyntaxError);
+        }
+
         assert_eq!(line.as_bytes()[0], b'E');
 
         let time = Time::parse(&line[1..7])?;
@@ -34,8 +34,7 @@ impl<'a> ERecord<'a> {
 
 #[cfg(test)]
 mod tests {
-    use super::ERecord;
-    use crate::util::datetime::Time;
+    use super::*;
 
     #[test]
     fn erecord_parse() {

@@ -1,4 +1,20 @@
-use crate::util::parse_error::ParseError;
+//! Low level record parsing API
+//!
+//! ```
+//! # extern crate igc;
+//! use igc::records::{Record,DataSource};
+//! match Record::parse_line("HFFTYFRTYPE:LXNAV,LX8000F") {
+//!     Ok(Record::H(header_rec)) => {
+//!         assert_eq!(header_rec.data_source, DataSource::FVU);
+//!         assert_eq!(header_rec.mnemonic, "FTY");
+//!         assert_eq!(header_rec.friendly_name, Some("FRTYPE"));
+//!         assert_eq!(header_rec.data, "LXNAV,LX8000F");
+//!     }
+//!     _ => unreachable!(),
+//! }
+//! ```
+
+use crate::util::ParseError;
 
 mod a_record;
 mod b_record;
@@ -20,11 +36,12 @@ pub use self::d_record::DRecord;
 pub use self::e_record::ERecord;
 pub use self::f_record::FRecord;
 pub use self::g_record::GRecord;
-pub use self::h_record::HRecord;
+pub use self::h_record::{HRecord,DataSource};
 pub use self::extension::{ExtensionDefRecord,Extension,Extendable};
 pub use self::k_record::KRecord;
 pub use self::l_record::LRecord;
 
+/// Sum type of all possible records in an IGC file.
 #[derive(Debug)]
 pub enum Record<'a> {
     A (ARecord<'a>),
@@ -40,10 +57,29 @@ pub enum Record<'a> {
     J (ExtensionDefRecord<'a>),
     K (KRecord<'a>),
     L (LRecord<'a>),
+
+    /// Wildcard record type, containing the string that wasn't recognized.
     Unrecognised (&'a str),
 }
 
 impl<'a> Record<'a> {
+    /// Perform a minimal parsing of a single IGC file line.
+    ///
+    /// This function is guaranteed not to allocate on the heap.
+    ///
+    /// ```
+    /// # extern crate igc;
+    /// use igc::records::{Record,DataSource};
+    /// match Record::parse_line("HFFTYFRTYPE:LXNAV,LX8000F") {
+    ///     Ok(Record::H(header_rec)) => {
+    ///         assert_eq!(header_rec.data_source, DataSource::FVU);
+    ///         assert_eq!(header_rec.mnemonic, "FTY");
+    ///         assert_eq!(header_rec.friendly_name, Some("FRTYPE"));
+    ///         assert_eq!(header_rec.data, "LXNAV,LX8000F");
+    ///     }
+    ///     _ => unreachable!(),
+    /// }
+    /// ```
     pub fn parse_line(line: &'a str) -> Result<Self, ParseError> {
         let rec = match line.as_bytes()[0] {
             b'A' => Record::A(ARecord::parse(line)?),

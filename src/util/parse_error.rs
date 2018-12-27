@@ -2,6 +2,7 @@ use std::io;
 use std::num;
 
 
+/// Enumeration of different errors that can occur during parsing
 #[derive(Debug)]
 pub enum ParseError {
     IOError(io::Error),

@@ -1,5 +1,4 @@
-use crate::util::datetime::Time;
-use crate::util::parse_error::ParseError;
+use crate::util::{Time,ParseError};
 use records::extension::Extendable;
 
 /// An extension data record.

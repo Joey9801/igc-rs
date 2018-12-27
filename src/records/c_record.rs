@@ -1,6 +1,4 @@
-use crate::util::datetime::{Date,Time};
-use crate::util::coord::RawPosition;
-use crate::util::parse_error::ParseError;
+use crate::util::{Date,Time,RawPosition,ParseError};
 
 /// The first flavor of C Record - a task record which defines some properties of the whole task.
 ///
@@ -21,8 +19,8 @@ impl<'a> CRecordDeclaration<'a> {
     /// Parse a string as a C record task declaration
     ///
     /// ```
-    /// # extern crate igc_rs;
-    /// # use igc_rs::{ records::CRecordDeclaration, util::{Time,Date} };
+    /// # extern crate igc;
+    /// # use igc::{ records::CRecordDeclaration, util::{Time,Date} };
     /// let record = CRecordDeclaration::parse("C230718092044000000000204Foo task").unwrap();
     /// assert_eq!(record.date, Date::from_dmy(23, 7, 2018));
     /// assert_eq!(record.time, Time::from_hms(9, 20, 44));
@@ -31,7 +29,10 @@ impl<'a> CRecordDeclaration<'a> {
     /// assert_eq!(record.task_name, Some("Foo task"));
     /// ```
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
-        assert!(line.len() >= 25);
+        if line.len() < 25 {
+            return Err(ParseError::SyntaxError);
+        }
+
         assert!(line.as_bytes()[0] == b'C');
 
         let date = Date::parse(&line[1..7])?;
@@ -60,8 +61,8 @@ impl<'a> CRecordTurnpoint<'a> {
     /// Parse a string as a C record task turnpoint
     ///
     /// ```
-    /// # extern crate igc_rs;
-    /// # use igc_rs::{ records::CRecordTurnpoint, util::{Compass,RawCoord} };
+    /// # extern crate igc;
+    /// # use igc::{ records::CRecordTurnpoint, util::{Compass,RawCoord} };
     /// let record = CRecordTurnpoint::parse("C5156040N00038120WLBZ-Leighton Buzzard NE").unwrap();
     /// assert_eq!(record.position.lat,
     ///            RawCoord { degrees: 51, minute_thousandths: 56040, sign: Compass::North });
@@ -88,7 +89,7 @@ impl<'a> CRecordTurnpoint<'a> {
 #[cfg(test)]
 mod tests {
     use super::{*};
-    use crate::util::coord::{Compass,RawCoord,RawPosition};
+    use crate::util::{Compass,RawCoord,RawPosition};
 
     #[test]
     fn c_record_declaration_parse() {
