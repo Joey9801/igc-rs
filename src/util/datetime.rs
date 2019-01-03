@@ -39,21 +39,25 @@ impl Time {
 /// Represents a single Gregorian calendar day
 #[derive(Debug, PartialEq, Eq)]
 pub struct Date {
+    /// In the range [1, 31]
     pub day: u8,
+
+    /// In the range [1, 12]
     pub month: u8,
-    pub year: u16,
+
+    /// Only the least significant two digits of the year. In the range [0, 99]
+    pub year: u8,
 }
 
 impl Date {
     /// Parses a date string of the form "DDMMYY"
-    /// There are not enough digits for the year in this format (bytes are expensive, yo), so
-    /// unilaterlly assume that the date is in the 21st century.
+    /// There are not enough digits for the year in this format (bytes are expensive, yo).
     pub fn parse(date_string: &str) -> Result<Self, ParseError> {
         assert_eq!(date_string.len(), 6);
 
         let day = date_string[0..2].parse::<u8>()?;
         let month = date_string[2..4].parse::<u8>()?;
-        let year = date_string[4..6].parse::<u16>()? + 2000;
+        let year = date_string[4..6].parse::<u8>()?;
 
         if day > 31 || month > 12 {
             Err(ParseError::NumberOutOfRange)
@@ -63,7 +67,10 @@ impl Date {
     }
 
     /// Helper method to create a Date from a (day, month, year) triplet
-    pub fn from_dmy(day: u8, month: u8, year: u16) -> Date {
+    pub fn from_dmy(day: u8, month: u8, year: u8) -> Date {
+        assert!(day >= 1 && day <= 31);
+        assert!(month >= 1 && month <= 12);
+        assert!(year <= 99);
         Date { day, month, year }
     }
 }
@@ -84,8 +91,8 @@ mod test {
     #[test]
     fn date_parse() {
         assert_eq!(Date::parse("010118").unwrap(),
-                   Date::from_dmy(1, 1, 2018));
+                   Date::from_dmy(1, 1, 18));
         assert_eq!(Date::parse("120757").unwrap(),
-                   Date::from_dmy(12, 7, 2057));
+                   Date::from_dmy(12, 7, 57));
     }
 }

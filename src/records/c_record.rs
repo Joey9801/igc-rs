@@ -22,7 +22,7 @@ impl<'a> CRecordDeclaration<'a> {
     /// # extern crate igc;
     /// # use igc::{ records::CRecordDeclaration, util::{Time,Date} };
     /// let record = CRecordDeclaration::parse("C230718092044000000000204Foo task").unwrap();
-    /// assert_eq!(record.date, Date::from_dmy(23, 7, 2018));
+    /// assert_eq!(record.date, Date::from_dmy(23, 7, 18));
     /// assert_eq!(record.time, Time::from_hms(9, 20, 44));
     /// assert_eq!(record.task_id, 2);
     /// assert_eq!(record.turnpoint_count, 4);
@@ -96,9 +96,9 @@ mod tests {
         let sample_string = "C230718092044000000000204Foo task";
         let parsed_declaration = CRecordDeclaration::parse(sample_string).unwrap();
         let mut expected = CRecordDeclaration {
-            date: Date { day: 23, month: 07, year: 2018 },
+            date: Date { day: 23, month: 07, year: 18 },
             time: Time { hours: 09, minutes: 20, seconds: 44 },
-            flight_date: Date { day: 00, month: 00, year: 2000 },
+            flight_date: Date { day: 00, month: 00, year: 00 },
             task_id: 2,
             turnpoint_count: 4,
             task_name: Some("Foo task")
