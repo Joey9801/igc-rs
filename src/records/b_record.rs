@@ -15,15 +15,15 @@ pub enum FixValid {
 /// Any/all other fields are optional and defined in an I Record, and are not hanled yet.
 ///
 /// The type for the altitudes doesn't techincally cover the complete range of representable
-/// altitudes in a conformant IGC file, but to exceed it you would have to be higher than 213,000
-/// feet AMSL..
+/// altitudes in a conformant IGC file, but to exceed it you would have to beat the Perlan
+/// Project's objective altitude (90,000ft, unachieved at the time of writing) by >15,000ft.
 #[derive(Debug, PartialEq, Eq)]
 pub struct BRecord<'a> {
     pub timestamp: Time,
     pub pos: RawPosition,
     pub fix_valid: FixValid,
-    pub pressure_alt: u16,
-    pub gps_alt: u16,
+    pub pressure_alt: i16,
+    pub gps_alt: i16,
     extension_string: &'a str,
 }
 
@@ -50,8 +50,8 @@ impl<'a> BRecord<'a> {
             _ => return Err(ParseError::SyntaxError),
         };
 
-        let pressure_alt = line[25..30].parse::<u16>()?;
-        let gps_alt = line[30..35].parse::<u16>()?;
+        let pressure_alt = line[25..30].parse::<i16>()?;
+        let gps_alt = line[30..35].parse::<i16>()?;
 
         let extension_string = &line[35..];
 
@@ -78,7 +78,7 @@ mod tests {
     #[test]
     fn simple_brecord_parse() {
         // Only mandatory fields, no optional fields defined in I records.
-        let sample_string = "B0941145152265N00032642WA0011500116FooExtensionString";
+        let sample_string = "B0941145152265N00032642WA00115-0116FooExtensionString";
         let parsed_record = BRecord::parse(sample_string).unwrap();
         let expected = BRecord {
             timestamp: Time::from_hms(9, 41, 14),
@@ -88,7 +88,7 @@ mod tests {
             },
             fix_valid: FixValid::Valid,
             pressure_alt: 115,
-            gps_alt: 116,
+            gps_alt: -116,
             extension_string: "FooExtensionString",
         };
 
