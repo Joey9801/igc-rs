@@ -1,76 +1,96 @@
 use crate::util::ParseError;
 
-// The A Record has to be the first record in an FVU Data File.
-// The flight verification unit identification record specifies the unique number of the equipment
-// which recorded the flight. This is most likely the manufacturer's serial number.
-// Format of the A Record:
-//   A M N N N N N T E X T S T R I N G CR LF
-//
-//  Description   Size      Element      Remarks
-//  Manufacturer  1 bytes   M            Valid characters alphanumeric
-//  Unique ID     5 bytes   NNNNN        Valid characters alphanumeric
-//  ID extension  ? bytes   TEXT STRING  Valid characters alphanumeric
-
-/// Enumeration of all FVU manufacturers defined in the IGC specification v1.00
 #[derive(Debug, PartialEq, Eq)]
-pub enum Manufacturer {
-    Borgelt,
-    Cambridge,
-    EW,
+pub enum Manufacturer<'a> {
+    Aircotec,
+    CambridgeAeroInstruments,
+    ClearNavInstruments,
+    DataSwan,
+    EwAvionics,
     Filser,
-    Ilec,
-    Metron,
+    Flarm,
+    Flytech,
+    Garrecht,
+    ImiGlidingEquipment,
+    Logstream,
+    LxNavigation,
+    LxNav,
+    Naviter,
+    NewTechnologies,
+    NielsenKellerman,
     Peschges,
-    SkyForce,
-    PathTracker,
-    Varcom,
-    Westerboer,
+    PressFinishElectronics,
+    PrintTechnik,
+    Scheffel,
+    StreamlineDataInstruments,
+    TriadisEngineering,
     Zander,
-    Collins,
-    Honeywell,
-    King,
-    Garmin,
-    Trimble,
-    Motorola,
-    Magellan,
-    Rockwell,
-    Unknown(u8),
+    UnknownSingle(u8),
+    UnknownTriple(&'a str),
 }
 
-impl Manufacturer {
-    fn parse_code(code: u8) -> Manufacturer {
-        use self::Manufacturer::{*};
-        match code {
-            b'B' => Borgelt,
-            b'C' => Cambridge,
-            b'E' => EW,
+impl<'a> Manufacturer<'a> {
+    pub fn parse_single_char(character: u8) -> Self {
+        use self::Manufacturer::*;
+        match character {
+            b'I' => Aircotec,
+            b'C' => CambridgeAeroInstruments,
+            b'D' => DataSwan,
+            b'E' => EwAvionics,
             b'F' => Filser,
-            b'I' => Ilec,
-            b'M' => Metron,
+            b'G' => Flarm,
+            b'n' => Flytech,
+            b'A' => Garrecht,
+            b'M' => ImiGlidingEquipment,
+            b'L' => LxNavigation,
+            b'V' => LxNav,
+            b'N' => NewTechnologies,
+            b'K' => NielsenKellerman,
             b'P' => Peschges,
-            b'S' => SkyForce,
-            b'T' => PathTracker,
-            b'V' => Varcom,
-            b'W' => Westerboer,
+            b'R' => PrintTechnik,
+            b'H' => Scheffel,
+            b'S' => StreamlineDataInstruments,
+            b'T' => TriadisEngineering,
             b'Z' => Zander,
-            b'1' => Collins,
-            b'2' => Honeywell,
-            b'3' => King,
-            b'4' => Garmin,
-            b'5' => Trimble,
-            b'6' => Motorola,
-            b'7' => Magellan,
-            b'8' => Rockwell,
-            unknown_code => Unknown(unknown_code),
+            unknown => UnknownSingle(unknown),
+        }
+    }
+
+    pub fn parse_triple_char(triple: &'a str) -> Self {
+        use self::Manufacturer::*;
+        match triple {
+            "ACT" => Aircotec,
+            "CAM" => CambridgeAeroInstruments,
+            "CNI" => ClearNavInstruments,
+            "DSX" => DataSwan,
+            "EWA" => EwAvionics,
+            "FIL" => Filser,
+            "FLA" => Flarm,
+            "FLY" => Flytech,
+            "GCS" => Garrecht,
+            "IMI" => ImiGlidingEquipment,
+            "LGS" => Logstream,
+            "LXN" => LxNavigation,
+            "LXV" => LxNav,
+            "NAV" => Naviter,
+            "NTE" => NewTechnologies,
+            "NKL" => NielsenKellerman,
+            "PES" => Peschges,
+            "PFE" => PressFinishElectronics,
+            "PRT" => PrintTechnik,
+            "SCH" => Scheffel,
+            "SDI" => StreamlineDataInstruments,
+            "TRI" => TriadisEngineering,
+            "ZAN" => Zander,
+            _ => UnknownTriple(triple),
         }
     }
 }
 
-
 /// Represents the FVU ID record
 #[derive(Debug, PartialEq, Eq)]
 pub struct ARecord<'a> {
-    pub manufacturer: Manufacturer,
+    pub manufacturer: Manufacturer<'a>,
     pub unique_id: &'a str,
     pub id_extension: Option<&'a str>,
 }
@@ -81,10 +101,10 @@ impl<'a> ARecord<'a> {
     /// ```
     /// # extern crate igc;
     /// # use igc::records::{ ARecord, Manufacturer };
-    /// let record = ARecord::parse("ACWhizzASDF").unwrap();
-    /// assert_eq!(record.manufacturer, Manufacturer::Cambridge);
-    /// assert_eq!(record.unique_id, "Whizz");
-    /// assert_eq!(record.id_extension, Some("ASDF"));
+    /// let record = ARecord::parse("ACAMWatFoo").unwrap();
+    /// assert_eq!(record.manufacturer, Manufacturer::CambridgeAeroInstruments);
+    /// assert_eq!(record.unique_id, "Wat");
+    /// assert_eq!(record.id_extension, Some("Foo"));
     /// ```
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
         assert_eq!(&line[0..1], "A");
@@ -93,8 +113,8 @@ impl<'a> ARecord<'a> {
             return Err(ParseError::SyntaxError);
         }
 
-        let manufacturer = Manufacturer::parse_code(line.as_bytes()[1]);
-        let unique_id = &line[2..7];
+        let manufacturer = Manufacturer::parse_triple_char(&line[1..4]);
+        let unique_id = &line[4..7];
         let id_extension = if line.len() > 7 {
             Some(&line[7..])
         } else {
@@ -112,10 +132,10 @@ mod tests {
     #[test]
     fn arecord_parse() {
         assert_eq!(
-            ARecord::parse("ACIdStrFoo").unwrap(),
+            ARecord::parse("ACAMWatFoo").unwrap(),
             ARecord {
-                manufacturer: Manufacturer::Cambridge,
-                unique_id: "IdStr",
+                manufacturer: Manufacturer::CambridgeAeroInstruments,
+                unique_id: "Wat",
                 id_extension: Some("Foo")
             }
         );
