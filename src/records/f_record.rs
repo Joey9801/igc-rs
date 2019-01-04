@@ -1,5 +1,4 @@
-use crate::util::{Time,ParseError};
-
+use crate::util::{ParseError, Time};
 
 /// A record indicating a change in the satellite constellation being used.
 #[derive(Debug, PartialEq, Eq)]
@@ -38,7 +37,10 @@ impl<'a> SatelliteArray<'a> {
     }
 
     pub fn iter(&self) -> SatelliteArrayIter<'a> {
-        SatelliteArrayIter { index: 0, raw_str: self.raw_str }
+        SatelliteArrayIter {
+            index: 0,
+            raw_str: self.raw_str,
+        }
     }
 }
 
@@ -55,7 +57,7 @@ impl<'a> Iterator for SatelliteArrayIter<'a> {
             return None;
         }
 
-        let ret = Some(&self.raw_str[self.index..(self.index+2)]);
+        let ret = Some(&self.raw_str[self.index..(self.index + 2)]);
         self.index += 2;
         ret
     }

@@ -1,9 +1,9 @@
 //! General utility structures and functions
 
-mod parse_error;
 mod coord;
 mod datetime;
+mod parse_error;
 
+pub use self::coord::{Compass, RawCoord, RawPosition};
+pub use self::datetime::{Date, Time};
 pub use self::parse_error::ParseError;
-pub use self::coord::{RawPosition,RawCoord,Compass};
-pub use self::datetime::{Date,Time};

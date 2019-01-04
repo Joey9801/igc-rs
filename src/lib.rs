@@ -5,7 +5,9 @@
 //! It is intended to be used as an unopinionated base for building higher level data structures
 //! representing traces/tasks/etc..
 
-#[cfg(test)] #[macro_use] extern crate approx;
+#[cfg(test)]
+#[macro_use]
+extern crate approx;
 
-pub mod util;
 pub mod records;
+pub mod util;
