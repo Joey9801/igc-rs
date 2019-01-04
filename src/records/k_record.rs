@@ -18,7 +18,7 @@ impl<'a> KRecord<'a> {
             return Err(ParseError::SyntaxError);
         }
 
-        let time = Time::parse(&line[1..7])?;
+        let time = line[1..7].parse()?;
         let extension_string = &line[7..];
 
         Ok(Self { time, extension_string })

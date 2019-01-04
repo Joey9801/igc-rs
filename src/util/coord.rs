@@ -1,3 +1,4 @@
+use std::str::FromStr;
 use super::parse_error::*;
 
 /// Enumeration of cardinal directions
@@ -94,10 +95,17 @@ impl RawPosition {
     }
 }
 
+impl FromStr for RawPosition {
+    type Err = ParseError;
+
+    fn from_str(s: &str) -> Result<Self, ParseError> {
+        Self::parse_lat_lon(s)
+    }
+}
 
 #[cfg(test)]
 mod test {
-    use super::{RawCoord,Compass};
+    use super::*;
 
     #[test]
     fn raw_coord_parse_lat() {
@@ -113,6 +121,14 @@ mod test {
                    RawCoord { degrees: 51, minute_thousandths: 52265, sign: Compass::East });
         assert_eq!(RawCoord::parse_lon("05152265W").unwrap(),
                    RawCoord { degrees: 51, minute_thousandths: 52265, sign: Compass::West });
+    }
+
+    #[test]
+    fn parse_raw_position() {
+        assert_eq!("5152265N05152265W".parse::<RawPosition>().unwrap(), RawPosition {
+            lat: RawCoord { degrees: 51, minute_thousandths: 52265, sign: Compass::North },
+            lon: RawCoord { degrees: 51, minute_thousandths: 52265, sign: Compass::West },
+        });
     }
 
     #[test]

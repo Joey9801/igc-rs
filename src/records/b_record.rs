@@ -40,8 +40,8 @@ impl<'a> BRecord<'a> {
             return Err(ParseError::SyntaxError);
         }
 
-        let timestamp = Time::parse(&line[1..7])?;
-        let pos = RawPosition::parse_lat_lon(&line[7..24])?;
+        let timestamp = line[1..7].parse()?;
+        let pos = line[7..24].parse()?;
 
         let fix_valid = match &line[24..25] {
             "A" => FixValid::Valid,
