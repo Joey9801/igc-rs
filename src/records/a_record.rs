@@ -99,7 +99,6 @@ impl<'a> ARecord<'a> {
     /// Parse an IGC A Record string
     ///
     /// ```
-    /// # extern crate igc;
     /// # use igc::records::{ ARecord, Manufacturer };
     /// let record = ARecord::parse("ACAMWatFoo").unwrap();
     /// assert_eq!(record.manufacturer, Manufacturer::CambridgeAeroInstruments);

@@ -1,5 +1,5 @@
 use crate::util::{Time,RawPosition,ParseError};
-use records::extension::Extendable;
+use crate::records::extension::Extendable;
 
 
 /// Possible values for the "fix valid" field of a B Record
@@ -31,7 +31,6 @@ impl<'a> BRecord<'a> {
     /// Parse an IGC B record string.
     ///
     /// ```
-    /// # extern crate igc;
     /// # use igc::{ records::BRecord, util::Time };
     /// let record = BRecord::parse("B0941145152265N00032642WA0011500115").unwrap();
     /// assert_eq!(record.timestamp, Time::from_hms(9, 41, 14));
@@ -73,7 +72,7 @@ mod tests {
     use super::*;
 
     use crate::util::{Time,Compass,RawCoord,RawPosition};
-    use records::extension::Extension;
+    use crate::records::extension::Extension;
 
     #[test]
     fn simple_brecord_parse() {
