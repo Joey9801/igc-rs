@@ -10,4 +10,3 @@ edition = "2018"
 
 [dev-dependencies]
 approx = "^0.3.0"
-memmap = "0.7.0"
