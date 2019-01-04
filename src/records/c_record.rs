@@ -19,7 +19,6 @@ impl<'a> CRecordDeclaration<'a> {
     /// Parse a string as a C record task declaration
     ///
     /// ```
-    /// # extern crate igc;
     /// # use igc::{ records::CRecordDeclaration, util::{Time,Date} };
     /// let record = CRecordDeclaration::parse("C230718092044000000000204Foo task").unwrap();
     /// assert_eq!(record.date, Date::from_dmy(23, 7, 18));
@@ -61,7 +60,6 @@ impl<'a> CRecordTurnpoint<'a> {
     /// Parse a string as a C record task turnpoint
     ///
     /// ```
-    /// # extern crate igc;
     /// # use igc::{ records::CRecordTurnpoint, util::{Compass,RawCoord} };
     /// let record = CRecordTurnpoint::parse("C5156040N00038120WLBZ-Leighton Buzzard NE").unwrap();
     /// assert_eq!(record.position.lat,

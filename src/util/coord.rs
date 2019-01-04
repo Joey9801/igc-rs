@@ -58,6 +58,26 @@ impl RawCoord {
     }
 }
 
+impl From<RawCoord> for f32 {
+    fn from(coord: RawCoord) -> Self {
+        let value = coord.degrees as Self + coord.minute_thousandths as Self / 60_000.;
+        match coord.sign {
+            Compass::North | Compass::East => value,
+            Compass::South | Compass::West => -value,
+        }
+    }
+}
+
+impl From<RawCoord> for f64 {
+    fn from(coord: RawCoord) -> Self {
+        let value = coord.degrees as Self + coord.minute_thousandths as Self / 60_000.;
+        match coord.sign {
+            Compass::North | Compass::East => value,
+            Compass::South | Compass::West => -value,
+        }
+    }
+}
+
 /// A raw lat/lon pair.
 #[derive(Debug, PartialEq, Eq)]
 pub struct RawPosition {
@@ -109,5 +129,11 @@ mod test {
             lat: RawCoord { degrees: 51, minute_thousandths: 52265, sign: Compass::North },
             lon: RawCoord { degrees: 51, minute_thousandths: 52265, sign: Compass::West },
         });
+    }
+
+    #[test]
+    fn convert_to_float() {
+        assert_relative_eq!(RawCoord::parse_lon("05152265E").unwrap().into(), 51.871082f32);
+        assert_relative_eq!(RawCoord::parse_lat("5152265S").unwrap().into(), -51.87108333333333f64);
     }
 }
