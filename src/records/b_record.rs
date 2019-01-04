@@ -42,7 +42,7 @@ impl<'a> BRecord<'a> {
         }
 
         let timestamp = Time::parse(&line[1..7])?;
-        let pos = RawPosition::parse_lat_lon(&line[7..24])?;
+        let pos = line[7..24].parse()?;
 
         let fix_valid = match &line[24..25] {
             "A" => FixValid::Valid,

@@ -74,7 +74,7 @@ impl<'a> CRecordTurnpoint<'a> {
         assert!(line.len() >= 18);
         assert!(line.as_bytes()[0] == b'C');
 
-        let position = RawPosition::parse_lat_lon(&line[1..18])?;
+        let position = line[1..18].parse()?;
         let turnpoint_name = if line.len() > 18 {
             Some(&line[18..])
         } else {
