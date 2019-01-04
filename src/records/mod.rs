@@ -85,11 +85,9 @@ impl<'a> Record<'a> {
             b'C' => {
                 // In a turnpoint C record, the 9th character is the N/S of the latitutde
                 // In a declaration type C record, it is a number (part of the declaration time)
-                let ninth = line.as_bytes()[8];
-                if ninth == b'N' || ninth == b'S' {
-                    Record::CTurnpoint(CRecordTurnpoint::parse(line)?)
-                } else {
-                    Record::CDeclaration(CRecordDeclaration::parse(line)?)
+                match line.as_bytes()[8] {
+                    b'N' | b'S' => Record::CTurnpoint(CRecordTurnpoint::parse(line)?),
+                    _ => Record::CDeclaration(CRecordDeclaration::parse(line)?),
                 }
             },
             b'D' => Record::D(DRecord::parse(line)?),
