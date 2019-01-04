@@ -8,3 +8,4 @@ documentation = "https://docs.rs/igc"
 license = "MIT"
 
 [dev-dependencies]
+approx = "^0.3.0"
