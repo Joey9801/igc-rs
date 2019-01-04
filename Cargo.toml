@@ -6,6 +6,7 @@ authors = ["Joe Roberts <joe@jwjr.co.uk>"]
 repository = "https://github.com/Joey9801/igc-rs"
 documentation = "https://docs.rs/igc"
 license = "MIT"
+edition = "2018"
 
 [dev-dependencies]
 approx = "^0.3.0"
