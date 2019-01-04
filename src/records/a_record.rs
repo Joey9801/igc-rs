@@ -1,6 +1,7 @@
 use std::fmt;
 
 use crate::util::ParseError;
+use crate::util::DisplayOption;
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum Manufacturer<'a> {
@@ -187,21 +188,11 @@ impl<'a> ARecord<'a> {
 impl<'a> fmt::Display for ARecord<'a> {
     /// Formats this record as it should appear in an IGC file.
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let manufacturer_triple;
-        let id_extension;
-        if let Some(x) = self.manufacturer.to_triple_char() {
-            manufacturer_triple = x;
-        } else {
-            manufacturer_triple = "";
-        }
-
-        if let Some(x) = self.id_extension {
-            id_extension = x;
-        } else {
-            id_extension = "";
-        }
-
-        write!(f, "A{}{}{}", manufacturer_triple, self.unique_id, id_extension)
+        write!(f, "A{}{}{}",
+               DisplayOption(self.manufacturer.to_triple_char()),
+               self.unique_id,
+               DisplayOption(self.id_extension)
+        )
     }
 }
 
