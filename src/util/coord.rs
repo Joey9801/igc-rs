@@ -114,6 +114,7 @@ impl FromStr for RawPosition {
 #[cfg(test)]
 mod test {
     use super::*;
+    use approx::assert_relative_eq;
 
     #[test]
     fn raw_coord_parse_lat() {
