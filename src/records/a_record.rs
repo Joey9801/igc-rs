@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::util::ParseError;
 
 #[derive(Debug, PartialEq, Eq)]
@@ -39,7 +41,6 @@ impl<'a> Manufacturer<'a> {
             b'E' => EwAvionics,
             b'F' => Filser,
             b'G' => Flarm,
-            b'n' => Flytech,
             b'A' => Garrecht,
             b'M' => ImiGlidingEquipment,
             b'L' => LxNavigation,
@@ -85,6 +86,64 @@ impl<'a> Manufacturer<'a> {
             _ => UnknownTriple(triple),
         }
     }
+
+    pub fn to_single_char(&self) -> Option<u8> {
+        use self::Manufacturer::*;
+        match self {
+            Aircotec                  => Some(b'I'),
+            CambridgeAeroInstruments  => Some(b'C'),
+            DataSwan                  => Some(b'D'),
+            EwAvionics                => Some(b'E'),
+            Filser                    => Some(b'F'),
+            Flarm                     => Some(b'G'),
+            Garrecht                  => Some(b'A'),
+            ImiGlidingEquipment       => Some(b'M'),
+            LxNavigation              => Some(b'L'),
+            LxNav                     => Some(b'V'),
+            NewTechnologies           => Some(b'N'),
+            NielsenKellerman          => Some(b'K'),
+            Peschges                  => Some(b'P'),
+            PrintTechnik              => Some(b'R'),
+            Scheffel                  => Some(b'H'),
+            StreamlineDataInstruments => Some(b'S'),
+            TriadisEngineering        => Some(b'T'),
+            Zander                    => Some(b'Z'),
+            UnknownSingle(s)          => Some(*s),
+            _                         => None,
+        }
+
+    }
+
+    pub fn to_triple_char(&self) -> Option<&'a str> {
+        use self::Manufacturer::*;
+        match self {
+            Aircotec                  => Some("ACT"),
+            CambridgeAeroInstruments  => Some("CAM"),
+            ClearNavInstruments       => Some("CNI"),
+            DataSwan                  => Some("DSX"),
+            EwAvionics                => Some("EWA"),
+            Filser                    => Some("FIL"),
+            Flarm                     => Some("FLA"),
+            Flytech                   => Some("FLY"),
+            Garrecht                  => Some("GCS"),
+            ImiGlidingEquipment       => Some("IMI"),
+            Logstream                 => Some("LGS"),
+            LxNavigation              => Some("LXN"),
+            LxNav                     => Some("LXV"),
+            Naviter                   => Some("NAV"),
+            NewTechnologies           => Some("NTE"),
+            NielsenKellerman          => Some("NKL"),
+            Peschges                  => Some("PES"),
+            PressFinishElectronics    => Some("PFE"),
+            PrintTechnik              => Some("PRT"),
+            Scheffel                  => Some("SCH"),
+            StreamlineDataInstruments => Some("SDI"),
+            TriadisEngineering        => Some("TRI"),
+            Zander                    => Some("ZAN"),
+            UnknownTriple(t)          => Some(t),
+            _                         => None,
+        }
+    }
 }
 
 /// Represents the FVU ID record
@@ -125,6 +184,27 @@ impl<'a> ARecord<'a> {
     }
 }
 
+impl<'a> fmt::Display for ARecord<'a> {
+    /// Formats this record as it should appear in an IGC file.
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let manufacturer_triple;
+        let id_extension;
+        if let Some(x) = self.manufacturer.to_triple_char() {
+            manufacturer_triple = x;
+        } else {
+            manufacturer_triple = "";
+        }
+
+        if let Some(x) = self.id_extension {
+            id_extension = x;
+        } else {
+            id_extension = "";
+        }
+
+        write!(f, "A{}{}{}", manufacturer_triple, self.unique_id, id_extension)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::{ARecord,Manufacturer};
@@ -138,6 +218,18 @@ mod tests {
                 unique_id: "Wat",
                 id_extension: Some("Foo")
             }
+        );
+    }
+
+    #[test]
+    fn arecord_fmt() {
+        assert_eq!(
+            format!("{}", ARecord {
+                manufacturer: Manufacturer::CambridgeAeroInstruments,
+                unique_id: "Wat",
+                id_extension: Some("Foo")
+            }),
+            "ACAMWatFoo"
         );
     }
 }
