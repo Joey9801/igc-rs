@@ -35,9 +35,9 @@ impl<'a> CRecordDeclaration<'a> {
 
         assert!(line.as_bytes()[0] == b'C');
 
-        let date = Date::parse(&line[1..7])?;
-        let time = Time::parse(&line[7..13])?;
-        let flight_date = Date::parse(&line[13..19])?;
+        let date = line[1..7].parse()?;
+        let time = line[7..13].parse()?;
+        let flight_date = line[13..19].parse()?;
         let task_id = line[19..23].parse::<u16>()?;
         let turnpoint_count = line[23..25].parse::<u8>()?;
         let task_name = if line.len() > 25 {

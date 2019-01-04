@@ -14,7 +14,7 @@ impl<'a> FRecord<'a> {
             return Err(ParseError::SyntaxError);
         }
 
-        let time = Time::parse(&line[1..7])?;
+        let time = line[1..7].parse()?;
 
         let array_str = &line[7..];
         if array_str.len() < 2 || array_str.len() % 2 != 0 {
