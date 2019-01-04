@@ -1,6 +1,3 @@
-extern crate igc;
-extern crate memmap;
-
 use std::fs::File;
 use memmap::MmapOptions;
 use igc::records::Record;
