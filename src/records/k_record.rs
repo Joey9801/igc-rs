@@ -1,5 +1,5 @@
 use crate::util::{Time,ParseError};
-use records::extension::Extendable;
+use crate::records::extension::Extendable;
 
 /// An extension data record.
 ///
@@ -36,7 +36,7 @@ impl<'a> Extendable for KRecord<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use records::extension::Extension;
+    use crate::records::extension::Extension;
 
     #[test]
     fn krecord_parse() {

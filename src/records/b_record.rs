@@ -1,5 +1,5 @@
 use crate::util::{Time,RawPosition,ParseError};
-use records::extension::Extendable;
+use crate::records::extension::Extendable;
 
 
 /// Possible values for the "fix valid" field of a B Record
@@ -73,7 +73,7 @@ mod tests {
     use super::*;
 
     use crate::util::{Time,Compass,RawCoord,RawPosition};
-    use records::extension::Extension;
+    use crate::records::extension::Extension;
 
     #[test]
     fn simple_brecord_parse() {
