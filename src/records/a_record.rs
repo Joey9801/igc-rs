@@ -120,13 +120,17 @@ impl<'a> ARecord<'a> {
             None
         };
 
-        Ok(ARecord { manufacturer, unique_id, id_extension })
+        Ok(ARecord {
+            manufacturer,
+            unique_id,
+            id_extension,
+        })
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{ARecord,Manufacturer};
+    use super::{ARecord, Manufacturer};
 
     #[test]
     fn arecord_parse() {

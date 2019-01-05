@@ -1,5 +1,5 @@
-use crate::util::{Time,ParseError};
 use crate::records::extension::Extendable;
+use crate::util::{ParseError, Time};
 
 /// An extension data record.
 ///
@@ -21,7 +21,10 @@ impl<'a> KRecord<'a> {
         let time = line[1..7].parse()?;
         let extension_string = &line[7..];
 
-        Ok(Self { time, extension_string })
+        Ok(Self {
+            time,
+            extension_string,
+        })
     }
 }
 
@@ -42,17 +45,35 @@ mod tests {
     fn krecord_parse() {
         let sample_string = "K095214FooTheBar";
         let parsed = KRecord::parse(sample_string).unwrap();
-        let expected = KRecord { time: Time::from_hms(9, 52, 14), extension_string: "FooTheBar" };
+        let expected = KRecord {
+            time: Time::from_hms(9, 52, 14),
+            extension_string: "FooTheBar",
+        };
 
         assert_eq!(parsed, expected);
     }
 
     #[test]
     fn krecord_extensions() {
-        let record = KRecord { time: Time::from_hms(9, 52, 14), extension_string: "FooTheBar" };
-        let ext1 = Extension { start_byte: 8, end_byte: 10, mnemonic: "One" };
-        let ext2 = Extension { start_byte: 11, end_byte: 13, mnemonic: "Two" };
-        let ext3 = Extension { start_byte: 14, end_byte: 16, mnemonic: "Th3" };
+        let record = KRecord {
+            time: Time::from_hms(9, 52, 14),
+            extension_string: "FooTheBar",
+        };
+        let ext1 = Extension {
+            start_byte: 8,
+            end_byte: 10,
+            mnemonic: "One",
+        };
+        let ext2 = Extension {
+            start_byte: 11,
+            end_byte: 13,
+            mnemonic: "Two",
+        };
+        let ext3 = Extension {
+            start_byte: 14,
+            end_byte: 16,
+            mnemonic: "Th3",
+        };
 
         assert_eq!(record.get_extension(&ext1).unwrap(), "Foo");
         assert_eq!(record.get_extension(&ext2).unwrap(), "The");

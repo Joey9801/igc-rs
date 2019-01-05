@@ -1,4 +1,4 @@
-use crate::util::{ParseError,Time};
+use crate::util::{ParseError, Time};
 
 /// Describes an event logged during the flight, associated with the B Record immediately
 /// following.
@@ -28,7 +28,11 @@ impl<'a> ERecord<'a> {
             None
         };
 
-        Ok(ERecord { time, mnemonic, text })
+        Ok(ERecord {
+            time,
+            mnemonic,
+            text,
+        })
     }
 }
 

@@ -1,5 +1,5 @@
-use std::str::FromStr;
 use crate::util::parse_error::ParseError;
+use std::str::FromStr;
 
 /// Represents a specific time of day with second precision.
 ///
@@ -23,7 +23,11 @@ impl Time {
         if hours > 24 || minutes > 60 || seconds > 60 {
             Err(ParseError::NumberOutOfRange)
         } else {
-            Ok(Time { hours, minutes, seconds })
+            Ok(Time {
+                hours,
+                minutes,
+                seconds,
+            })
         }
     }
 
@@ -33,7 +37,11 @@ impl Time {
         assert!(minutes <= 60);
         assert!(seconds <= 60);
 
-        Time { hours, minutes, seconds }
+        Time {
+            hours,
+            minutes,
+            seconds,
+        }
     }
 }
 
@@ -92,24 +100,22 @@ impl FromStr for Date {
     }
 }
 
-
 #[cfg(test)]
 mod test {
     use super::{Date, Time};
 
     #[test]
     fn time_parse() {
-        assert_eq!("012345".parse::<Time>().unwrap(),
-                   Time::from_hms(1, 23, 45));
-        assert_eq!("152136".parse::<Time>().unwrap(),
-                   Time::from_hms(15, 21, 36));
+        assert_eq!("012345".parse::<Time>().unwrap(), Time::from_hms(1, 23, 45));
+        assert_eq!(
+            "152136".parse::<Time>().unwrap(),
+            Time::from_hms(15, 21, 36)
+        );
     }
 
     #[test]
     fn date_parse() {
-        assert_eq!("010118".parse::<Date>().unwrap(),
-                   Date::from_dmy(1, 1, 18));
-        assert_eq!("120757".parse::<Date>().unwrap(),
-                   Date::from_dmy(12, 7, 57));
+        assert_eq!("010118".parse::<Date>().unwrap(), Date::from_dmy(1, 1, 18));
+        assert_eq!("120757".parse::<Date>().unwrap(), Date::from_dmy(12, 7, 57));
     }
 }

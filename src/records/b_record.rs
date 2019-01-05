@@ -1,6 +1,5 @@
-use crate::util::{Time,RawPosition,ParseError};
 use crate::records::extension::Extendable;
-
+use crate::util::{ParseError, RawPosition, Time};
 
 /// Possible values for the "fix valid" field of a B Record
 #[derive(Debug, PartialEq, Eq)]
@@ -54,7 +53,14 @@ impl<'a> BRecord<'a> {
 
         let extension_string = &line[35..];
 
-        Ok(Self { timestamp, pos, fix_valid, pressure_alt, gps_alt, extension_string })
+        Ok(Self {
+            timestamp,
+            pos,
+            fix_valid,
+            pressure_alt,
+            gps_alt,
+            extension_string,
+        })
     }
 }
 
@@ -66,13 +72,12 @@ impl<'a> Extendable for BRecord<'a> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    use crate::util::{Time,Compass,RawCoord,RawPosition};
     use crate::records::extension::Extension;
+    use crate::util::{Compass, RawCoord, RawPosition, Time};
 
     #[test]
     fn simple_brecord_parse() {
@@ -82,8 +87,16 @@ mod tests {
         let expected = BRecord {
             timestamp: Time::from_hms(9, 41, 14),
             pos: RawPosition {
-                lat: RawCoord { degrees: 51, minute_thousandths: 52265, sign: Compass::North },
-                lon: RawCoord { degrees: 0, minute_thousandths: 32642, sign: Compass::West },
+                lat: RawCoord {
+                    degrees: 51,
+                    minute_thousandths: 52265,
+                    sign: Compass::North,
+                },
+                lon: RawCoord {
+                    degrees: 0,
+                    minute_thousandths: 32642,
+                    sign: Compass::West,
+                },
             },
             fix_valid: FixValid::Valid,
             pressure_alt: 115,
@@ -105,8 +118,16 @@ mod tests {
         let record = BRecord {
             timestamp: Time::from_hms(9, 41, 14),
             pos: RawPosition {
-                lat: RawCoord { degrees: 51, minute_thousandths: 52265, sign: Compass::North },
-                lon: RawCoord { degrees: 0, minute_thousandths: 32642, sign: Compass::West },
+                lat: RawCoord {
+                    degrees: 51,
+                    minute_thousandths: 52265,
+                    sign: Compass::North,
+                },
+                lon: RawCoord {
+                    degrees: 0,
+                    minute_thousandths: 32642,
+                    sign: Compass::West,
+                },
             },
             fix_valid: FixValid::Valid,
             pressure_alt: 115,
@@ -114,7 +135,11 @@ mod tests {
             extension_string: "0123456789",
         };
 
-        let extension = Extension { start_byte: 36, end_byte: 40, mnemonic: "FOO" };
+        let extension = Extension {
+            start_byte: 36,
+            end_byte: 40,
+            mnemonic: "FOO",
+        };
 
         let extracted = record.get_extension(&extension).unwrap();
         let expected = "01234";

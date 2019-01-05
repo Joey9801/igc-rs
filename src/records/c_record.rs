@@ -1,4 +1,4 @@
-use crate::util::{Date,Time,RawPosition,ParseError};
+use crate::util::{Date, ParseError, RawPosition, Time};
 
 /// The first flavor of C Record - a task record which defines some properties of the whole task.
 ///
@@ -45,7 +45,14 @@ impl<'a> CRecordDeclaration<'a> {
             None
         };
 
-        Ok(CRecordDeclaration { date, time, flight_date, task_id, turnpoint_count, task_name })
+        Ok(CRecordDeclaration {
+            date,
+            time,
+            flight_date,
+            task_id,
+            turnpoint_count,
+            task_name,
+        })
     }
 }
 
@@ -79,27 +86,41 @@ impl<'a> CRecordTurnpoint<'a> {
             None
         };
 
-        Ok(CRecordTurnpoint { position, turnpoint_name })
+        Ok(CRecordTurnpoint {
+            position,
+            turnpoint_name,
+        })
     }
 }
 
-
 #[cfg(test)]
 mod tests {
-    use super::{*};
-    use crate::util::{Compass,RawCoord,RawPosition};
+    use super::*;
+    use crate::util::{Compass, RawCoord, RawPosition};
 
     #[test]
     fn c_record_declaration_parse() {
         let sample_string = "C230718092044000000000204Foo task";
         let parsed_declaration = CRecordDeclaration::parse(sample_string).unwrap();
         let mut expected = CRecordDeclaration {
-            date: Date { day: 23, month: 07, year: 18 },
-            time: Time { hours: 09, minutes: 20, seconds: 44 },
-            flight_date: Date { day: 00, month: 00, year: 00 },
+            date: Date {
+                day: 23,
+                month: 07,
+                year: 18,
+            },
+            time: Time {
+                hours: 09,
+                minutes: 20,
+                seconds: 44,
+            },
+            flight_date: Date {
+                day: 00,
+                month: 00,
+                year: 00,
+            },
             task_id: 2,
             turnpoint_count: 4,
-            task_name: Some("Foo task")
+            task_name: Some("Foo task"),
         };
         assert_eq!(parsed_declaration, expected);
 
@@ -107,7 +128,6 @@ mod tests {
         let parsed_declaration = CRecordDeclaration::parse(sample_string).unwrap();
         expected.task_name = None;
         assert_eq!(parsed_declaration, expected);
-
     }
 
     #[test]
@@ -116,13 +136,20 @@ mod tests {
         let parsed_turnpoint = CRecordTurnpoint::parse(sample_string).unwrap();
         let expected = CRecordTurnpoint {
             position: RawPosition {
-                lat: RawCoord { degrees: 51, minute_thousandths: 56040, sign: Compass::North },
-                lon: RawCoord { degrees: 0, minute_thousandths: 38120, sign: Compass::West },
+                lat: RawCoord {
+                    degrees: 51,
+                    minute_thousandths: 56040,
+                    sign: Compass::North,
+                },
+                lon: RawCoord {
+                    degrees: 0,
+                    minute_thousandths: 38120,
+                    sign: Compass::West,
+                },
             },
             turnpoint_name: Some("LBZ-Leighton Buzzard NE"),
         };
 
         assert_eq!(parsed_turnpoint, expected);
-
     }
 }
