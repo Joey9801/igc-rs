@@ -1,5 +1,6 @@
+use std::{fmt, str::FromStr};
+
 use crate::util::parse_error::ParseError;
-use std::str::FromStr;
 
 /// Represents a specific time of day with second precision.
 ///
@@ -53,6 +54,12 @@ impl FromStr for Time {
     }
 }
 
+impl fmt::Display for Time {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:02}{:02}{:02}", self.hours, self.minutes, self.seconds)
+    }
+}
+
 /// Represents a single Gregorian calendar day
 #[derive(Debug, PartialEq, Eq)]
 pub struct Date {
@@ -100,6 +107,12 @@ impl FromStr for Date {
     }
 }
 
+impl fmt::Display for Date {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:02}{:02}{:02}", self.day, self.month, self.year)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::{Date, Time};
@@ -114,8 +127,19 @@ mod test {
     }
 
     #[test]
+    fn time_fmt() {
+        assert_eq!(format!("{}", Time::from_hms(1, 23, 45)), "012345");
+    }
+
+    #[test]
     fn date_parse() {
         assert_eq!("010118".parse::<Date>().unwrap(), Date::from_dmy(1, 1, 18));
         assert_eq!("120757".parse::<Date>().unwrap(), Date::from_dmy(12, 7, 57));
     }
+
+    #[test]
+    fn date_fmt() {
+        assert_eq!(format!("{}", Date::from_dmy(5, 10, 18)), "051018");
+    }
+
 }
