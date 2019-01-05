@@ -1,5 +1,6 @@
-use crate::util::parse_error::ParseError;
 use std::str::FromStr;
+
+use crate::util::parse_error::ParseError;
 
 /// Represents a specific time of day with second precision.
 ///

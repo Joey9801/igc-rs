@@ -1,5 +1,6 @@
-use super::parse_error::*;
 use std::str::FromStr;
+
+use crate::util::ParseError;
 
 /// Enumeration of cardinal directions
 #[derive(Debug, Eq, PartialEq)]

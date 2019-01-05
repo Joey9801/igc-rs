@@ -68,11 +68,24 @@ impl<'a> CRecordTurnpoint<'a> {
     ///
     /// ```
     /// # use igc::{ records::CRecordTurnpoint, util::{Compass,RawCoord} };
-    /// let record = CRecordTurnpoint::parse("C5156040N00038120WLBZ-Leighton Buzzard NE").unwrap();
-    /// assert_eq!(record.position.lat,
-    ///            RawCoord { degrees: 51, minute_thousandths: 56040, sign: Compass::North });
-    /// assert_eq!(record.position.lon,
-    ///            RawCoord { degrees: 0, minute_thousandths: 38120, sign: Compass::West });
+    /// let record =
+    ///     CRecordTurnpoint::parse("C5156040N00038120WLBZ-Leighton Buzzard NE").unwrap();
+    /// assert_eq!(
+    ///     record.position.lat,
+    ///     RawCoord {
+    ///         degrees: 51,
+    ///         minute_thousandths: 56040,
+    ///         sign: Compass::North
+    ///     }
+    /// );
+    /// assert_eq!(
+    ///     record.position.lon,
+    ///     RawCoord {
+    ///         degrees: 0,
+    ///         minute_thousandths: 38120,
+    ///         sign: Compass::West
+    ///     }
+    /// );
     /// assert_eq!(record.turnpoint_name, Some("LBZ-Leighton Buzzard NE"));
     /// ```
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {

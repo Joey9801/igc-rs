@@ -1,5 +1,6 @@
-use crate::util::ParseError;
 use std::str;
+
+use crate::util::ParseError;
 
 /// Defines a generic record extension, as appears in I and J records.
 ///
