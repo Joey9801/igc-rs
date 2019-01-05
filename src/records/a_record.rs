@@ -90,7 +90,8 @@ impl<'a> Manufacturer<'a> {
 
     pub fn to_single_char(&self) -> Option<u8> {
         use self::Manufacturer::*;
-        #[rustfmt_skip]
+
+        #[rustfmt::skip]
         match self {
             Aircotec                  => Some(b'I'),
             CambridgeAeroInstruments  => Some(b'C'),
@@ -117,7 +118,7 @@ impl<'a> Manufacturer<'a> {
 
     pub fn to_triple_char(&self) -> Option<&'a str> {
         use self::Manufacturer::*;
-        #[rustfmt_skip]
+        #[rustfmt::skip]
         match self {
             Aircotec                  => Some("ACT"),
             CambridgeAeroInstruments  => Some("CAM"),

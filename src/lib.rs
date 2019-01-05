@@ -5,5 +5,7 @@
 //! It is intended to be used as an unopinionated base for building higher level data structures
 //! representing traces/tasks/etc..
 
+#![feature(stmt_expr_attributes)]
+
 pub mod records;
 pub mod util;
