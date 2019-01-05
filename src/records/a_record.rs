@@ -1,7 +1,7 @@
 use std::fmt;
 
-use crate::util::ParseError;
 use crate::util::DisplayOption;
+use crate::util::ParseError;
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum Manufacturer<'a> {
@@ -90,6 +90,7 @@ impl<'a> Manufacturer<'a> {
 
     pub fn to_single_char(&self) -> Option<u8> {
         use self::Manufacturer::*;
+        #[rustfmt_skip]
         match self {
             Aircotec                  => Some(b'I'),
             CambridgeAeroInstruments  => Some(b'C'),
@@ -112,11 +113,11 @@ impl<'a> Manufacturer<'a> {
             UnknownSingle(s)          => Some(*s),
             _                         => None,
         }
-
     }
 
     pub fn to_triple_char(&self) -> Option<&'a str> {
         use self::Manufacturer::*;
+        #[rustfmt_skip]
         match self {
             Aircotec                  => Some("ACT"),
             CambridgeAeroInstruments  => Some("CAM"),
@@ -159,7 +160,6 @@ impl<'a> ARecord<'a> {
     /// Parse an IGC A Record string
     ///
     /// ```
-    /// # extern crate igc;
     /// # use igc::records::{ ARecord, Manufacturer };
     /// let record = ARecord::parse("ACAMWatFoo").unwrap();
     /// assert_eq!(record.manufacturer, Manufacturer::CambridgeAeroInstruments);
@@ -181,24 +181,30 @@ impl<'a> ARecord<'a> {
             None
         };
 
-        Ok(ARecord { manufacturer, unique_id, id_extension })
+        Ok(ARecord {
+            manufacturer,
+            unique_id,
+            id_extension,
+        })
     }
 }
 
 impl<'a> fmt::Display for ARecord<'a> {
     /// Formats this record as it should appear in an IGC file.
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "A{}{}{}",
-               DisplayOption(self.manufacturer.to_triple_char()),
-               self.unique_id,
-               DisplayOption(self.id_extension)
+        write!(
+            f,
+            "A{}{}{}",
+            DisplayOption(self.manufacturer.to_triple_char()),
+            self.unique_id,
+            DisplayOption(self.id_extension)
         )
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{ARecord,Manufacturer};
+    use super::{ARecord, Manufacturer};
 
     #[test]
     fn arecord_parse() {
@@ -215,11 +221,14 @@ mod tests {
     #[test]
     fn arecord_fmt() {
         assert_eq!(
-            format!("{}", ARecord {
-                manufacturer: Manufacturer::CambridgeAeroInstruments,
-                unique_id: "Wat",
-                id_extension: Some("Foo")
-            }),
+            format!(
+                "{}",
+                ARecord {
+                    manufacturer: Manufacturer::CambridgeAeroInstruments,
+                    unique_id: "Wat",
+                    id_extension: Some("Foo")
+                }
+            ),
             "ACAMWatFoo"
         );
     }

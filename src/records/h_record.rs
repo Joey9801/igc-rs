@@ -41,13 +41,18 @@ impl<'a> HRecord<'a> {
         let data;
         if let Some(colon_idx) = line.find(':') {
             friendly_name = Some(&line[5..colon_idx]);
-            data = &line[colon_idx+1..];
+            data = &line[colon_idx + 1..];
         } else {
             friendly_name = None;
             data = &line[5..];
         }
 
-        Ok(Self { data_source, mnemonic, friendly_name, data })
+        Ok(Self {
+            data_source,
+            mnemonic,
+            friendly_name,
+            data,
+        })
     }
 }
 
@@ -60,10 +65,10 @@ mod tests {
         let sample_string = "HFGIDGLIDERID:D-KOOL";
         let parsed_record = HRecord::parse(sample_string).unwrap();
         let expected = HRecord {
-            data_source : DataSource::FVU,
-            mnemonic : "GID",
-            friendly_name : Some("GLIDERID"),
-            data: "D-KOOL"
+            data_source: DataSource::FVU,
+            mnemonic: "GID",
+            friendly_name: Some("GLIDERID"),
+            data: "D-KOOL",
         };
 
         assert_eq!(parsed_record, expected);

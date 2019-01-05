@@ -1,4 +1,4 @@
-use crate::util::{ParseError,Time};
+use crate::util::{ParseError, Time};
 
 /// Describes an event logged during the flight, associated with the B Record immediately
 /// following.
@@ -19,7 +19,7 @@ impl<'a> ERecord<'a> {
 
         assert_eq!(line.as_bytes()[0], b'E');
 
-        let time = Time::parse(&line[1..7])?;
+        let time = line[1..7].parse()?;
         let mnemonic = &line[7..10];
 
         let text = if line.len() > 10 {
@@ -28,7 +28,11 @@ impl<'a> ERecord<'a> {
             None
         };
 
-        Ok(ERecord { time, mnemonic, text })
+        Ok(ERecord {
+            time,
+            mnemonic,
+            text,
+        })
     }
 }
 

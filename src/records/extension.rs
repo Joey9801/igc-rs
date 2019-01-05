@@ -1,6 +1,5 @@
+use crate::util::ParseError;
 use std::str;
-use crate::util::ParseError; 
-
 
 /// Defines a generic record extension, as appears in I and J records.
 ///
@@ -37,7 +36,11 @@ impl<'a> Extension<'a> {
 
         let mnemonic = &string[4..7];
 
-        Ok(Self { start_byte, end_byte, mnemonic })
+        Ok(Self {
+            start_byte,
+            end_byte,
+            mnemonic,
+        })
     }
 }
 
@@ -48,7 +51,10 @@ pub trait Extendable {
     fn extension_string(&self) -> &str;
 
     /// Get a given extension from the record implementing this trait.
-    fn get_extension<'a, 'b>(&'a self, extension: &'b Extension<'a>) -> Result<&'a str, ParseError> {
+    fn get_extension<'a, 'b>(
+        &'a self,
+        extension: &'b Extension<'a>,
+    ) -> Result<&'a str, ParseError> {
         if (extension.start_byte as usize) < Self::BASE_LENGTH {
             return Err(ParseError::BadExtension);
         }
@@ -90,13 +96,17 @@ impl<'a> ExtensionDefRecord<'a> {
             return Err(ParseError::SyntaxError);
         }
 
-        let extensions = line[3..].as_bytes()
+        let extensions = line[3..]
+            .as_bytes()
             .chunks(Extension::STRING_LENGTH)
             .map(unsafe { |buf| str::from_utf8_unchecked(buf) })
             .map(Extension::parse)
             .collect::<Result<_, _>>()?;
 
-        Ok(Self { num_extensions, extensions } )
+        Ok(Self {
+            num_extensions,
+            extensions,
+        })
     }
 }
 
@@ -111,10 +121,22 @@ mod tests {
         let expected = ExtensionDefRecord {
             num_extensions: 3,
             extensions: vec![
-                Extension { mnemonic: "FXA", start_byte: 36, end_byte: 38 },
-                Extension { mnemonic: "ENL", start_byte: 39, end_byte: 41 },
-                Extension { mnemonic: "TAS", start_byte: 42, end_byte: 46 },
-            ]
+                Extension {
+                    mnemonic: "FXA",
+                    start_byte: 36,
+                    end_byte: 38,
+                },
+                Extension {
+                    mnemonic: "ENL",
+                    start_byte: 39,
+                    end_byte: 41,
+                },
+                Extension {
+                    mnemonic: "TAS",
+                    start_byte: 42,
+                    end_byte: 46,
+                },
+            ],
         };
 
         assert_eq!(parsed_record, expected);

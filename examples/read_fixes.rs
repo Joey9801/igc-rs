@@ -1,18 +1,21 @@
-extern crate igc;
-extern crate memmap;
-
-use std::fs::File;
-use memmap::MmapOptions;
 use igc::records::Record;
+use std::fs::File;
+use std::io::BufRead;
+use std::io::BufReader;
 
 fn main() {
     let filename = "examples/example.igc";
 
     let file = File::open(filename).unwrap();
-    let mmap = unsafe { MmapOptions::new().map(&file) }.unwrap();
+    let reader = BufReader::new(&file);
 
-    for line in std::str::from_utf8(&mmap).unwrap().lines() {
-        let record = match Record::parse_line(line) {
+    for result in reader.lines() {
+        let line = match result {
+            Ok(line) => line,
+            Err(_) => std::process::exit(-1),
+        };
+
+        let record = match Record::parse_line(&line) {
             Ok(record) => record,
             Err(_) => std::process::exit(-1),
         };

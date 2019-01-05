@@ -21,52 +21,50 @@ mod b_record;
 mod c_record;
 mod d_record;
 mod e_record;
+mod extension;
 mod f_record;
 mod g_record;
 mod h_record;
-mod extension;
 mod k_record;
 mod l_record;
 
-
 pub use self::a_record::*;
 pub use self::b_record::BRecord;
-pub use self::c_record::{CRecordDeclaration,CRecordTurnpoint};
+pub use self::c_record::{CRecordDeclaration, CRecordTurnpoint};
 pub use self::d_record::DRecord;
 pub use self::e_record::ERecord;
+pub use self::extension::{Extendable, Extension, ExtensionDefRecord};
 pub use self::f_record::FRecord;
 pub use self::g_record::GRecord;
-pub use self::h_record::{HRecord,DataSource};
-pub use self::extension::{ExtensionDefRecord,Extension,Extendable};
+pub use self::h_record::{DataSource, HRecord};
 pub use self::k_record::KRecord;
 pub use self::l_record::LRecord;
 
 /// Sum type of all possible records in an IGC file.
 #[derive(Debug)]
 pub enum Record<'a> {
-    A (ARecord<'a>),
-    B (BRecord<'a>),
-    CDeclaration (CRecordDeclaration<'a>),
-    CTurnpoint (CRecordTurnpoint<'a>),
-    D (DRecord<'a>),
-    E (ERecord<'a>),
-    F (FRecord<'a>),
-    G (GRecord<'a>),
-    H (HRecord<'a>),
-    I (ExtensionDefRecord<'a>),
-    J (ExtensionDefRecord<'a>),
-    K (KRecord<'a>),
-    L (LRecord<'a>),
+    A(ARecord<'a>),
+    B(BRecord<'a>),
+    CDeclaration(CRecordDeclaration<'a>),
+    CTurnpoint(CRecordTurnpoint<'a>),
+    D(DRecord<'a>),
+    E(ERecord<'a>),
+    F(FRecord<'a>),
+    G(GRecord<'a>),
+    H(HRecord<'a>),
+    I(ExtensionDefRecord<'a>),
+    J(ExtensionDefRecord<'a>),
+    K(KRecord<'a>),
+    L(LRecord<'a>),
 
     /// Wildcard record type, containing the string that wasn't recognized.
-    Unrecognised (&'a str),
+    Unrecognised(&'a str),
 }
 
 impl<'a> Record<'a> {
     /// Perform a minimal parsing of a single IGC file line.
     ///
     /// ```
-    /// # extern crate igc;
     /// use igc::records::{Record,DataSource};
     /// match Record::parse_line("HFFTYFRTYPE:LXNAV,LX8000F") {
     ///     Ok(Record::H(header_rec)) => {
@@ -85,13 +83,11 @@ impl<'a> Record<'a> {
             b'C' => {
                 // In a turnpoint C record, the 9th character is the N/S of the latitutde
                 // In a declaration type C record, it is a number (part of the declaration time)
-                let ninth = line.as_bytes()[8];
-                if ninth == b'N' || ninth == b'S' {
-                    Record::CTurnpoint(CRecordTurnpoint::parse(line)?)
-                } else {
-                    Record::CDeclaration(CRecordDeclaration::parse(line)?)
+                match line.as_bytes()[8] {
+                    b'N' | b'S' => Record::CTurnpoint(CRecordTurnpoint::parse(line)?),
+                    _ => Record::CDeclaration(CRecordDeclaration::parse(line)?),
                 }
-            },
+            }
             b'D' => Record::D(DRecord::parse(line)?),
             b'E' => Record::E(ERecord::parse(line)?),
             b'F' => Record::F(FRecord::parse(line)?),

@@ -1,6 +1,5 @@
 use crate::util::ParseError;
 
-
 #[derive(Debug, PartialEq, Eq)]
 pub enum GpsQualifier {
     Gps,
@@ -31,19 +30,25 @@ impl<'a> DRecord<'a> {
 
         let station_id = &line[2..6];
 
-        Ok(DRecord { qualifier, station_id })
+        Ok(DRecord {
+            qualifier,
+            station_id,
+        })
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{GpsQualifier,DRecord};
+    use super::{DRecord, GpsQualifier};
 
     #[test]
     fn drecord_parse() {
         let example_line = "D1ABCD";
         let parsed = DRecord::parse(example_line).unwrap();
-        let expected = DRecord { qualifier: GpsQualifier::Gps, station_id: "ABCD" };
+        let expected = DRecord {
+            qualifier: GpsQualifier::Gps,
+            station_id: "ABCD",
+        };
 
         assert_eq!(parsed, expected);
     }

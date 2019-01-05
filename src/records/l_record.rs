@@ -24,7 +24,9 @@ mod tests {
     fn lrecord_parse() {
         let sample_string = "LFoo the bar";
         let parsed = LRecord::parse(sample_string).unwrap();
-        let expected = LRecord { log_string: "Foo the bar" };
+        let expected = LRecord {
+            log_string: "Foo the bar",
+        };
 
         assert_eq!(parsed, expected);
     }
