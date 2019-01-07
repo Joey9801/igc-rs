@@ -77,7 +77,7 @@ mod tests {
     use super::*;
 
     use crate::records::extension::Extension;
-    use crate::util::{Compass, RawCoord, RawPosition, Time};
+    use crate::util::{Compass, RawLatitude, RawLongitude, RawPosition, Time};
 
     #[test]
     fn simple_brecord_parse() {
@@ -87,16 +87,8 @@ mod tests {
         let expected = BRecord {
             timestamp: Time::from_hms(9, 41, 14),
             pos: RawPosition {
-                lat: RawCoord {
-                    degrees: 51,
-                    minute_thousandths: 52265,
-                    sign: Compass::North,
-                },
-                lon: RawCoord {
-                    degrees: 0,
-                    minute_thousandths: 32642,
-                    sign: Compass::West,
-                },
+                lat: RawLatitude::new(51, 52_265, Compass::North),
+                lon: RawLongitude::new(0, 32_642, Compass::West),
             },
             fix_valid: FixValid::Valid,
             pressure_alt: 115,
@@ -118,16 +110,8 @@ mod tests {
         let record = BRecord {
             timestamp: Time::from_hms(9, 41, 14),
             pos: RawPosition {
-                lat: RawCoord {
-                    degrees: 51,
-                    minute_thousandths: 52265,
-                    sign: Compass::North,
-                },
-                lon: RawCoord {
-                    degrees: 0,
-                    minute_thousandths: 32642,
-                    sign: Compass::West,
-                },
+                lat: RawLatitude::new(51, 52_265, Compass::North),
+                lon: RawLongitude::new(0, 32_642, Compass::West),
             },
             fix_valid: FixValid::Valid,
             pressure_alt: 115,

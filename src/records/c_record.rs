@@ -67,12 +67,10 @@ impl<'a> CRecordTurnpoint<'a> {
     /// Parse a string as a C record task turnpoint
     ///
     /// ```
-    /// # use igc::{ records::CRecordTurnpoint, util::{Compass,RawCoord} };
+    /// # use igc::{ records::CRecordTurnpoint, util::{Compass,RawLatitude,RawLongitude} };
     /// let record = CRecordTurnpoint::parse("C5156040N00038120WLBZ-Leighton Buzzard NE").unwrap();
-    /// assert_eq!(record.position.lat,
-    ///            RawCoord { degrees: 51, minute_thousandths: 56040, sign: Compass::North });
-    /// assert_eq!(record.position.lon,
-    ///            RawCoord { degrees: 0, minute_thousandths: 38120, sign: Compass::West });
+    /// assert_eq!(record.position.lat, RawLatitude::new(51, 56_040, Compass::North));
+    /// assert_eq!(record.position.lon, RawLongitude::new(0, 38_120, Compass::West));
     /// assert_eq!(record.turnpoint_name, Some("LBZ-Leighton Buzzard NE"));
     /// ```
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
@@ -96,7 +94,7 @@ impl<'a> CRecordTurnpoint<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::util::{Compass, RawCoord, RawPosition};
+    use crate::util::{Compass, RawLatitude, RawLongitude, RawPosition};
 
     #[test]
     fn c_record_declaration_parse() {
@@ -136,16 +134,8 @@ mod tests {
         let parsed_turnpoint = CRecordTurnpoint::parse(sample_string).unwrap();
         let expected = CRecordTurnpoint {
             position: RawPosition {
-                lat: RawCoord {
-                    degrees: 51,
-                    minute_thousandths: 56040,
-                    sign: Compass::North,
-                },
-                lon: RawCoord {
-                    degrees: 0,
-                    minute_thousandths: 38120,
-                    sign: Compass::West,
-                },
+                lat: RawLatitude::new(51, 56_040, Compass::North),
+                lon: RawLongitude::new(0, 38_120, Compass::West),
             },
             turnpoint_name: Some("LBZ-Leighton Buzzard NE"),
         };
