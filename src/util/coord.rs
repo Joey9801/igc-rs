@@ -1,3 +1,4 @@
+use std::fmt;
 use std::str::FromStr;
 
 use super::parse_error::*;
@@ -9,6 +10,19 @@ pub enum Compass {
     South,
     East,
     West,
+}
+
+impl fmt::Display for Compass {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let letter = match self {
+            Compass::North => 'N',
+            Compass::South => 'S',
+            Compass::East => 'E',
+            Compass::West => 'W',
+        };
+
+        write!(f, "{}", letter)
+    }
 }
 
 /// Represents a latitude OR longitude, closely representing the form used in IGC files.
@@ -87,6 +101,16 @@ impl FromStr for RawLatitude {
     }
 }
 
+impl fmt::Display for RawLatitude {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{:02}{:05}{}",
+            self.0.degrees, self.0.minute_thousandths, self.0.sign
+        )
+    }
+}
+
 impl From<RawLatitude> for f32 {
     fn from(lat: RawLatitude) -> Self {
         lat.0.into()
@@ -147,6 +171,16 @@ impl FromStr for RawLongitude {
     }
 }
 
+impl fmt::Display for RawLongitude {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{:03}{:05}{}",
+            self.0.degrees, self.0.minute_thousandths, self.0.sign
+        )
+    }
+}
+
 impl From<RawLongitude> for f32 {
     fn from(lon: RawLongitude) -> Self {
         lon.0.into()
@@ -178,6 +212,12 @@ impl FromStr for RawPosition {
     }
 }
 
+impl fmt::Display for RawPosition {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}{}", self.lat, self.lon)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -186,26 +226,50 @@ mod test {
     #[test]
     fn raw_lat_parse() {
         assert_eq!(
-            "5152265N".parse::<RawLatitude>().unwrap(),
             RawLatitude::new(51, 52_265, Compass::North),
+            "5152265N".parse().unwrap()
         );
 
         assert_eq!(
-            "5152265S".parse::<RawLatitude>().unwrap(),
             RawLatitude::new(51, 52_265, Compass::South),
+            "5152265S".parse().unwrap()
         );
     }
 
     #[test]
     fn raw_coord_parse_lon() {
         assert_eq!(
-            "05152265E".parse::<RawLongitude>().unwrap(),
-            RawLongitude::new(51, 52_265, Compass::East)
+            RawLongitude::new(51, 52_265, Compass::East),
+            "05152265E".parse().unwrap()
         );
 
         assert_eq!(
-            "05152265W".parse::<RawLongitude>().unwrap(),
-            RawLongitude::new(51, 52_265, Compass::West)
+            RawLongitude::new(51, 52_265, Compass::West),
+            "05152265W".parse().unwrap()
+        );
+    }
+
+    #[test]
+    fn raw_lat_format() {
+        assert_eq!(
+            format!("{}", RawLatitude::new(51, 23_355, Compass::North)),
+            "5123355N"
+        );
+        assert_eq!(
+            format!("{}", RawLatitude::new(51, 23_355, Compass::South)),
+            "5123355S"
+        );
+    }
+
+    #[test]
+    fn raw_lon_format() {
+        assert_eq!(
+            format!("{}", RawLongitude::new(51, 23_355, Compass::East)),
+            "05123355E"
+        );
+        assert_eq!(
+            format!("{}", RawLongitude::new(51, 23_355, Compass::West)),
+            "05123355W"
         );
     }
 
