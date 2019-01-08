@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::util::ParseError;
 
 /// A security record.
@@ -13,5 +15,11 @@ impl<'a> GRecord<'a> {
         assert_eq!(line.as_bytes()[0], b'G');
 
         Ok(Self { data: &line[1..] })
+    }
+}
+
+impl<'a> fmt::Display for GRecord<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "G{}", self.data)
     }
 }
