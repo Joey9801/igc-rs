@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::util::ParseError;
 
 #[derive(Debug, PartialEq, Eq)]
@@ -37,6 +39,17 @@ impl<'a> DRecord<'a> {
     }
 }
 
+impl<'a> fmt::Display for DRecord<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let qual_str = match self.qualifier {
+            GpsQualifier::Gps => '1',
+            GpsQualifier::DGps => '2',
+        };
+
+        write!(f, "D{}{}", qual_str, self.station_id)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::{DRecord, GpsQualifier};
@@ -51,5 +64,16 @@ mod tests {
         };
 
         assert_eq!(parsed, expected);
+    }
+
+    #[test]
+    fn drecord_format() {
+        let expected_string = "D1ABCD";
+        let record = DRecord {
+            qualifier: GpsQualifier::Gps,
+            station_id: "ABCD",
+        };
+
+        assert_eq!(format!("{}", record), expected_string);
     }
 }
