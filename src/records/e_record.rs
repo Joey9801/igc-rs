@@ -1,4 +1,6 @@
-use crate::util::{ParseError, Time};
+use std::fmt;
+
+use crate::util::{DisplayOption, ParseError, Time};
 
 /// Describes an event logged during the flight, associated with the B Record immediately
 /// following.
@@ -36,6 +38,18 @@ impl<'a> ERecord<'a> {
     }
 }
 
+impl<'a> fmt::Display for ERecord<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "E{time}{mnemonic}{text}",
+            time = self.time,
+            mnemonic = self.mnemonic,
+            text = DisplayOption(self.text)
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -51,5 +65,17 @@ mod tests {
         };
 
         assert_eq!(parsed, expected);
+    }
+
+    #[test]
+    fn erecord_format() {
+        let expected_string = "E120515FOOText";
+        let record = ERecord {
+            time: Time::from_hms(12, 5, 15),
+            mnemonic: "FOO",
+            text: Some("Text"),
+        };
+
+        assert_eq!(format!("{}", record), expected_string);
     }
 }
