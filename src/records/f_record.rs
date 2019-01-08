@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::util::{ParseError, Time};
 
 /// A record indicating a change in the satellite constellation being used.
@@ -22,6 +24,12 @@ impl<'a> FRecord<'a> {
         let satellites = SatelliteArray::new(array_str);
 
         Ok(Self { time, satellites })
+    }
+}
+
+impl<'a> fmt::Display for FRecord<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "F{}{}", self.time, self.satellites.raw_str)
     }
 }
 
@@ -71,10 +79,31 @@ mod tests {
     fn frecord_parse() {
         let sample_string = "F095212AABBCCDDEE";
         let parsed_record = FRecord::parse(sample_string).unwrap();
+        let expected_record = FRecord {
+            time: Time::from_hms(9, 52, 12),
+            satellites: SatelliteArray::new("AABBCCDDEE"),
+        };
 
-        assert_eq!(parsed_record.time, Time::from_hms(9, 52, 12));
+        assert_eq!(parsed_record, expected_record);
+    }
 
-        let satellites: Vec<&str> = parsed_record.satellites.iter().collect();
-        assert_eq!(satellites, vec!["AA", "BB", "CC", "DD", "EE"]);
+    #[test]
+    fn satellite_iter() {
+        let satellite_array = SatelliteArray::new("AABBCCDDEE");
+        assert_eq!(
+            vec!["AA", "BB", "CC", "DD", "EE"],
+            satellite_array.iter().collect::<Vec<_>>()
+        );
+    }
+
+    #[test]
+    fn frecord_format() {
+        let expected_string = "F095212AABBCCDDEE";
+        let record = FRecord {
+            time: Time::from_hms(9, 52, 12),
+            satellites: SatelliteArray::new("AABBCCDDEE"),
+        };
+
+        assert_eq!(format!("{}", record), expected_string);
     }
 }
