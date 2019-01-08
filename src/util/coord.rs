@@ -35,7 +35,7 @@ pub struct RawCoord {
 
 impl From<RawCoord> for f32 {
     fn from(coord: RawCoord) -> Self {
-        let value = coord.degrees as Self + coord.minute_thousandths as Self / 60_000.;
+        let value = Self::from(coord.degrees) + Self::from(coord.minute_thousandths) / 60_000.;
         match coord.sign {
             Compass::North | Compass::East => value,
             Compass::South | Compass::West => -value,
@@ -45,7 +45,7 @@ impl From<RawCoord> for f32 {
 
 impl From<RawCoord> for f64 {
     fn from(coord: RawCoord) -> Self {
-        let value = coord.degrees as Self + coord.minute_thousandths as Self / 60_000.;
+        let value = Self::from(coord.degrees) + Self::from(coord.minute_thousandths) / 60_000.;
         match coord.sign {
             Compass::North | Compass::East => value,
             Compass::South | Compass::West => -value,
