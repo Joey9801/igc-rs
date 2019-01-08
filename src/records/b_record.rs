@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::records::extension::Extendable;
 use crate::util::{ParseError, RawPosition, Time};
 
@@ -72,6 +74,27 @@ impl<'a> Extendable for BRecord<'a> {
     }
 }
 
+impl<'a> fmt::Display for BRecord<'a> {
+    /// Formats this record as it should appear in an IGC file.
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let valid = match self.fix_valid {
+            FixValid::Valid => "A",
+            FixValid::NavWarning => "V",
+        };
+
+        write!(
+            f,
+            "B{timestamp}{pos}{valid}{pressure_alt:05}{gps_alt:05}{extension_string}",
+            timestamp = self.timestamp,
+            pos = self.pos,
+            valid = valid,
+            pressure_alt = self.pressure_alt,
+            gps_alt = self.gps_alt,
+            extension_string = self.extension_string
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -103,6 +126,24 @@ mod tests {
         assert_eq!(parsed_record.fix_valid, expected.fix_valid);
         assert_eq!(parsed_record.pressure_alt, expected.pressure_alt);
         assert_eq!(parsed_record, expected);
+    }
+
+    #[test]
+    fn simple_brecord_format() {
+        let expected = "B0941145152265N00032642WA00115-0116FooExtensionString";
+        let record = BRecord {
+            timestamp: Time::from_hms(9, 41, 14),
+            pos: RawPosition {
+                lat: RawLatitude::new(51, 52_265, Compass::North),
+                lon: RawLongitude::new(0, 32_642, Compass::West),
+            },
+            fix_valid: FixValid::Valid,
+            pressure_alt: 115,
+            gps_alt: -116,
+            extension_string: "FooExtensionString",
+        };
+
+        assert_eq!(format!("{}", record), expected);
     }
 
     #[test]
