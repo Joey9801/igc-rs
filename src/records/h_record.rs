@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::util::ParseError;
 
 /// Enumeration of the different sources an H record can come from.
@@ -25,6 +27,15 @@ impl DataSource {
             b'O' => DataSource::OfficialObserver,
             b'P' => DataSource::Pilot,
             _ => DataSource::Unrecognized(byte),
+        }
+    }
+
+    fn to_byte(&self) -> u8 {
+        match self {
+            DataSource::FVU => b'F',
+            DataSource::OfficialObserver => b'O',
+            DataSource::Pilot => b'P',
+            DataSource::Unrecognized(byte) => *byte,
         }
     }
 }
@@ -56,6 +67,29 @@ impl<'a> HRecord<'a> {
     }
 }
 
+impl<'a> fmt::Display for HRecord<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // NB: not using DisplayOption, as the colon also disappears when friendly_name is None
+        match self.friendly_name {
+            Some(friendly_name) => write!(
+                f,
+                "H{source}{mnemonic}{friendly_name}:{data}",
+                source = self.data_source.to_byte() as char,
+                mnemonic = self.mnemonic,
+                friendly_name = friendly_name,
+                data = self.data
+            ),
+            None => write!(
+                f,
+                "H{source}{mnemonic}{data}",
+                source = self.data_source.to_byte() as char,
+                mnemonic = self.mnemonic,
+                data = self.data
+            ),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -72,5 +106,18 @@ mod tests {
         };
 
         assert_eq!(parsed_record, expected);
+    }
+
+    #[test]
+    fn hrecord_format() {
+        let expected_string = "HFGIDGLIDERID:D-KOOL";
+        let record = HRecord {
+            data_source: DataSource::FVU,
+            mnemonic: "GID",
+            friendly_name: Some("GLIDERID"),
+            data: "D-KOOL",
+        };
+
+        assert_eq!(format!("{}", record), expected_string);
     }
 }
