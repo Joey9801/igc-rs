@@ -129,6 +129,7 @@ impl<'a> ExtensionDefRecord<'a> {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct IRecord<'a>(pub ExtensionDefRecord<'a>);
 
 impl<'a> IRecord<'a> {
@@ -145,6 +146,7 @@ impl<'a> fmt::Display for IRecord<'a> {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct JRecord<'a>(pub ExtensionDefRecord<'a>);
 
 impl<'a> JRecord<'a> {

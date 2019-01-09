@@ -33,7 +33,7 @@ pub use self::b_record::BRecord;
 pub use self::c_record::{CRecordDeclaration, CRecordTurnpoint};
 pub use self::d_record::DRecord;
 pub use self::e_record::ERecord;
-pub use self::extension::{Extendable, Extension, ExtensionDefRecord};
+pub use self::extension::{Extendable, Extension, IRecord, JRecord};
 pub use self::f_record::FRecord;
 pub use self::g_record::GRecord;
 pub use self::h_record::{DataSource, HRecord};
@@ -52,8 +52,8 @@ pub enum Record<'a> {
     F(FRecord<'a>),
     G(GRecord<'a>),
     H(HRecord<'a>),
-    I(ExtensionDefRecord<'a>),
-    J(ExtensionDefRecord<'a>),
+    I(IRecord<'a>),
+    J(JRecord<'a>),
     K(KRecord<'a>),
     L(LRecord<'a>),
 
@@ -93,8 +93,8 @@ impl<'a> Record<'a> {
             b'F' => Record::F(FRecord::parse(line)?),
             b'G' => Record::G(GRecord::parse(line)?),
             b'H' => Record::H(HRecord::parse(line)?),
-            b'I' => Record::I(ExtensionDefRecord::parse(line)?),
-            b'J' => Record::J(ExtensionDefRecord::parse(line)?),
+            b'I' => Record::I(IRecord::parse(line)?),
+            b'J' => Record::J(JRecord::parse(line)?),
             b'K' => Record::K(KRecord::parse(line)?),
             b'L' => Record::L(LRecord::parse(line)?),
             _ => Record::Unrecognised(line),
