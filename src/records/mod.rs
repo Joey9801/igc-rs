@@ -2,7 +2,7 @@
 //!
 //! ```
 //! # extern crate igc;
-//! use igc::records::{Record,DataSource};
+//! use igc::records::{DataSource, Record};
 //! match Record::parse_line("HFFTYFRTYPE:LXNAV,LX8000F") {
 //!     Ok(Record::H(header_rec)) => {
 //!         assert_eq!(header_rec.data_source, DataSource::FVU);
@@ -65,7 +65,7 @@ impl<'a> Record<'a> {
     /// Perform a minimal parsing of a single IGC file line.
     ///
     /// ```
-    /// use igc::records::{Record,DataSource};
+    /// use igc::records::{DataSource, Record};
     /// match Record::parse_line("HFFTYFRTYPE:LXNAV,LX8000F") {
     ///     Ok(Record::H(header_rec)) => {
     ///         assert_eq!(header_rec.data_source, DataSource::FVU);

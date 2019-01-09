@@ -1,7 +1,6 @@
-use std::fmt;
-use std::str::FromStr;
+use std::{fmt, str::FromStr};
 
-use super::parse_error::*;
+use crate::util::ParseError;
 
 /// Enumeration of cardinal directions
 #[derive(Debug, Eq, PartialEq)]
@@ -35,7 +34,8 @@ pub struct RawCoord {
 
 impl From<RawCoord> for f32 {
     fn from(coord: RawCoord) -> Self {
-        let value = Self::from(coord.degrees) + Self::from(coord.minute_thousandths) / 60_000.;
+        let value =
+            Self::from(coord.degrees) + Self::from(coord.minute_thousandths) / 60_000.;
         match coord.sign {
             Compass::North | Compass::East => value,
             Compass::South | Compass::West => -value,
@@ -45,7 +45,8 @@ impl From<RawCoord> for f32 {
 
 impl From<RawCoord> for f64 {
     fn from(coord: RawCoord) -> Self {
-        let value = Self::from(coord.degrees) + Self::from(coord.minute_thousandths) / 60_000.;
+        let value =
+            Self::from(coord.degrees) + Self::from(coord.minute_thousandths) / 60_000.;
         match coord.sign {
             Compass::North | Compass::East => value,
             Compass::South | Compass::West => -value,
