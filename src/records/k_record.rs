@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::records::extension::Extendable;
 use crate::util::{ParseError, Time};
 
@@ -36,6 +38,12 @@ impl<'a> Extendable for KRecord<'a> {
     }
 }
 
+impl<'a> fmt::Display for KRecord<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "K{}{}", self.time, self.extension_string)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -51,6 +59,17 @@ mod tests {
         };
 
         assert_eq!(parsed, expected);
+    }
+
+    #[test]
+    fn krecord_format() {
+        let expected_string = "K095214FooTheBar";
+        let record = KRecord {
+            time: Time::from_hms(9, 52, 14),
+            extension_string: "FooTheBar",
+        };
+
+        assert_eq!(format!("{}", record), expected_string);
     }
 
     #[test]
