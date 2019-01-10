@@ -14,6 +14,8 @@
 //! }
 //! ```
 
+use std::fmt;
+
 use crate::util::ParseError;
 
 mod a_record;
@@ -41,7 +43,7 @@ pub use self::k_record::KRecord;
 pub use self::l_record::LRecord;
 
 /// Sum type of all possible records in an IGC file.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Record<'a> {
     A(ARecord<'a>),
     B(BRecord<'a>),
@@ -104,16 +106,55 @@ impl<'a> Record<'a> {
     }
 }
 
+impl<'a> fmt::Display for Record<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use self::Record::*;
+        // This is horrible...
+        match self {
+            A(rec) => write!(f, "{}", rec),
+            B(rec) => write!(f, "{}", rec),
+            CDeclaration(rec) => write!(f, "{}", rec),
+            CTurnpoint(rec) => write!(f, "{}", rec),
+            D(rec) => write!(f, "{}", rec),
+            E(rec) => write!(f, "{}", rec),
+            F(rec) => write!(f, "{}", rec),
+            G(rec) => write!(f, "{}", rec),
+            H(rec) => write!(f, "{}", rec),
+            I(rec) => write!(f, "{}", rec),
+            J(rec) => write!(f, "{}", rec),
+            K(rec) => write!(f, "{}", rec),
+            L(rec) => write!(f, "{}", rec),
+            Unrecognised(line) => write!(f, "{}", line),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
-    fn parse_record_line() {
-        let rec = super::Record::parse_line("ACIdStrFoo").unwrap();
-        println!("rec = {:?}", rec);
-        if let super::Record::A(a_record) = rec {
-            println!("The record was an A record: {:?}", a_record);
-        } else {
-            println!("The record was not an A record :( {:?}", rec);
-        }
+    fn record_parse_line() {
+        let rec = Record::parse_line("ACAMWatFoo").unwrap();
+        assert_eq!(
+            rec,
+            Record::A(ARecord {
+                manufacturer: Manufacturer::CambridgeAeroInstruments,
+                unique_id: "Wat",
+                id_extension: Some("Foo")
+            })
+        );
+    }
+
+    #[test]
+    fn record_format() {
+        let expected_str = "ACAMWatFoo";
+        let rec = Record::A(ARecord {
+            manufacturer: Manufacturer::CambridgeAeroInstruments,
+            unique_id: "Wat",
+            id_extension: Some("Foo"),
+        });
+
+        assert_eq!(format!("{}", rec), expected_str);
     }
 }
