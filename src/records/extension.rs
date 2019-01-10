@@ -136,7 +136,7 @@ impl<'a> IRecord<'a> {
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
         let first_byte = line.as_bytes()[0];
         assert!(first_byte == b'I');
-        Ok(Self(ExtensionDefRecord::parse(line)?))
+        Ok(IRecord(ExtensionDefRecord::parse(line)?))
     }
 }
 
@@ -153,7 +153,7 @@ impl<'a> JRecord<'a> {
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
         let first_byte = line.as_bytes()[0];
         assert!(first_byte == b'J');
-        Ok(Self(ExtensionDefRecord::parse(line)?))
+        Ok(JRecord(ExtensionDefRecord::parse(line)?))
     }
 }
 

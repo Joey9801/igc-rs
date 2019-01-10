@@ -63,7 +63,7 @@ impl RawLatitude {
         assert!(minute_thousandths < 60_000);
         assert!(sign == Compass::North || sign == Compass::South);
 
-        Self(RawCoord {
+        RawLatitude(RawCoord {
             degrees,
             minute_thousandths,
             sign,
@@ -93,7 +93,7 @@ impl FromStr for RawLatitude {
         if degrees > 90 || minute_thousandths > 60000 {
             Err(ParseError::NumberOutOfRange)
         } else {
-            Ok(Self(RawCoord {
+            Ok(RawLatitude(RawCoord {
                 degrees,
                 minute_thousandths,
                 sign,
@@ -133,7 +133,7 @@ impl RawLongitude {
         assert!(minute_thousandths < 60_000);
         assert!(sign == Compass::East || sign == Compass::West);
 
-        Self(RawCoord {
+        RawLongitude(RawCoord {
             degrees,
             minute_thousandths,
             sign,
@@ -163,7 +163,7 @@ impl FromStr for RawLongitude {
         if degrees > 180 || minute_thousandths > 60000 {
             Err(ParseError::NumberOutOfRange)
         } else {
-            Ok(Self(RawCoord {
+            Ok(RawLongitude(RawCoord {
                 degrees,
                 minute_thousandths,
                 sign,
