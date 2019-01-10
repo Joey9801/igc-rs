@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::util::ParseError;
 
 /// A simple plaintext log, used by some manufacturers for propietary extensions.
@@ -16,6 +18,12 @@ impl<'a> LRecord<'a> {
     }
 }
 
+impl<'a> fmt::Display for LRecord<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "L{}", self.log_string)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -29,5 +37,15 @@ mod tests {
         };
 
         assert_eq!(parsed, expected);
+    }
+
+    #[test]
+    fn lrecord_format() {
+        let expected_string = "LFoo the bar";
+        let record = LRecord {
+            log_string: "Foo the bar",
+        };
+
+        assert_eq!(format!("{}", record), expected_string);
     }
 }

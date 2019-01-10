@@ -1,9 +1,11 @@
-use crate::util::{Date, ParseError, RawPosition, Time};
+use std::fmt;
+
+use crate::util::{Date, DisplayOption, ParseError, RawPosition, Time};
 
 /// The first flavor of C Record - a task record which defines some properties of the whole task.
 ///
 /// The IGC specification states that a conforming file containing a task declaration will contain
-/// a CRecordDeclaration, immediately followed (turnpoint_count + 4) CRecordTurnpoints's.
+/// a CRecordDeclaration, immediately followed (turnpoint_count + 4) CRecordTurnpoints.
 /// The extra 4 turnpoints are for the takeoff/land locations, and the task start/finish locations
 #[derive(Debug, PartialEq, Eq)]
 pub struct CRecordDeclaration<'a> {
@@ -56,6 +58,21 @@ impl<'a> CRecordDeclaration<'a> {
     }
 }
 
+impl<'a> fmt::Display for CRecordDeclaration<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "C{date}{time}{flight_date}{task_id:04}{tp_count:02}{task_name}",
+            date = self.date,
+            time = self.time,
+            flight_date = self.flight_date,
+            task_id = self.task_id,
+            tp_count = self.turnpoint_count,
+            task_name = DisplayOption(self.task_name)
+        )
+    }
+}
+
 /// The second flavor of C Record - a start / turn / end point for a task.
 #[derive(Debug, PartialEq, Eq)]
 pub struct CRecordTurnpoint<'a> {
@@ -67,25 +84,10 @@ impl<'a> CRecordTurnpoint<'a> {
     /// Parse a string as a C record task turnpoint
     ///
     /// ```
-    /// # use igc::{ records::CRecordTurnpoint, util::{Compass,RawCoord} };
-    /// let record =
-    ///     CRecordTurnpoint::parse("C5156040N00038120WLBZ-Leighton Buzzard NE").unwrap();
-    /// assert_eq!(
-    ///     record.position.lat,
-    ///     RawCoord {
-    ///         degrees: 51,
-    ///         minute_thousandths: 56040,
-    ///         sign: Compass::North
-    ///     }
-    /// );
-    /// assert_eq!(
-    ///     record.position.lon,
-    ///     RawCoord {
-    ///         degrees: 0,
-    ///         minute_thousandths: 38120,
-    ///         sign: Compass::West
-    ///     }
-    /// );
+    /// # use igc::{ records::CRecordTurnpoint, util::{Compass,RawLatitude,RawLongitude} };
+    /// let record = CRecordTurnpoint::parse("C5156040N00038120WLBZ-Leighton Buzzard NE").unwrap();
+    /// assert_eq!(record.position.lat, RawLatitude::new(51, 56_040, Compass::North));
+    /// assert_eq!(record.position.lon, RawLongitude::new(0, 38_120, Compass::West));
     /// assert_eq!(record.turnpoint_name, Some("LBZ-Leighton Buzzard NE"));
     /// ```
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
@@ -106,10 +108,21 @@ impl<'a> CRecordTurnpoint<'a> {
     }
 }
 
+impl<'a> fmt::Display for CRecordTurnpoint<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "C{}{}",
+            self.position,
+            DisplayOption(self.turnpoint_name)
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::util::{Compass, RawCoord, RawPosition};
+    use crate::util::{Compass, RawLatitude, RawLongitude, RawPosition};
 
     #[test]
     fn c_record_declaration_parse() {
@@ -144,21 +157,43 @@ mod tests {
     }
 
     #[test]
+    fn c_record_declaration_format() {
+        let expected_string = "C230718092044000000000204Foo task";
+        let mut declaration = CRecordDeclaration {
+            date: Date {
+                day: 23,
+                month: 07,
+                year: 18,
+            },
+            time: Time {
+                hours: 09,
+                minutes: 20,
+                seconds: 44,
+            },
+            flight_date: Date {
+                day: 00,
+                month: 00,
+                year: 00,
+            },
+            task_id: 2,
+            turnpoint_count: 4,
+            task_name: Some("Foo task"),
+        };
+        assert_eq!(format!("{}", declaration), expected_string);
+
+        let expected_string = "C230718092044000000000204";
+        declaration.task_name = None;
+        assert_eq!(format!("{}", declaration), expected_string);
+    }
+
+    #[test]
     fn c_record_turnpoint_parse() {
         let sample_string = "C5156040N00038120WLBZ-Leighton Buzzard NE";
         let parsed_turnpoint = CRecordTurnpoint::parse(sample_string).unwrap();
         let expected = CRecordTurnpoint {
             position: RawPosition {
-                lat: RawCoord {
-                    degrees: 51,
-                    minute_thousandths: 56040,
-                    sign: Compass::North,
-                },
-                lon: RawCoord {
-                    degrees: 0,
-                    minute_thousandths: 38120,
-                    sign: Compass::West,
-                },
+                lat: RawLatitude::new(51, 56_040, Compass::North),
+                lon: RawLongitude::new(0, 38_120, Compass::West),
             },
             turnpoint_name: Some("LBZ-Leighton Buzzard NE"),
         };

@@ -1,4 +1,4 @@
-use std::str;
+use std::{fmt, str};
 
 use crate::util::ParseError;
 
@@ -42,6 +42,16 @@ impl<'a> Extension<'a> {
             end_byte,
             mnemonic,
         })
+    }
+}
+
+impl<'a> fmt::Display for Extension<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{:02}{:02}{}",
+            self.start_byte, self.end_byte, self.mnemonic
+        )
     }
 }
 
@@ -109,6 +119,48 @@ impl<'a> ExtensionDefRecord<'a> {
             extensions,
         })
     }
+
+    fn fmt(&self, f: &mut fmt::Formatter, letter: char) -> fmt::Result {
+        write!(f, "{}{:02}", letter, self.num_extensions)?;
+        for ext in self.extensions.iter() {
+            write!(f, "{}", ext)?;
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct IRecord<'a>(pub ExtensionDefRecord<'a>);
+
+impl<'a> IRecord<'a> {
+    pub fn parse(line: &'a str) -> Result<Self, ParseError> {
+        let first_byte = line.as_bytes()[0];
+        assert!(first_byte == b'I');
+        Ok(IRecord(ExtensionDefRecord::parse(line)?))
+    }
+}
+
+impl<'a> fmt::Display for IRecord<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.0.fmt(f, 'I')
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct JRecord<'a>(pub ExtensionDefRecord<'a>);
+
+impl<'a> JRecord<'a> {
+    pub fn parse(line: &'a str) -> Result<Self, ParseError> {
+        let first_byte = line.as_bytes()[0];
+        assert!(first_byte == b'J');
+        Ok(JRecord(ExtensionDefRecord::parse(line)?))
+    }
+}
+
+impl<'a> fmt::Display for JRecord<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.0.fmt(f, 'J')
+    }
 }
 
 #[cfg(test)]
@@ -141,5 +193,59 @@ mod tests {
         };
 
         assert_eq!(parsed_record, expected);
+    }
+
+    #[test]
+    fn irecord_format() {
+        let expected_string = "I033638FXA3941ENL4246TAS";
+        let record = IRecord(ExtensionDefRecord {
+            num_extensions: 3,
+            extensions: vec![
+                Extension {
+                    mnemonic: "FXA",
+                    start_byte: 36,
+                    end_byte: 38,
+                },
+                Extension {
+                    mnemonic: "ENL",
+                    start_byte: 39,
+                    end_byte: 41,
+                },
+                Extension {
+                    mnemonic: "TAS",
+                    start_byte: 42,
+                    end_byte: 46,
+                },
+            ],
+        });
+
+        assert_eq!(format!("{}", record), expected_string);
+    }
+
+    #[test]
+    fn jrecord_format() {
+        let expected_string = "J033638FXA3941ENL4246TAS";
+        let record = JRecord(ExtensionDefRecord {
+            num_extensions: 3,
+            extensions: vec![
+                Extension {
+                    mnemonic: "FXA",
+                    start_byte: 36,
+                    end_byte: 38,
+                },
+                Extension {
+                    mnemonic: "ENL",
+                    start_byte: 39,
+                    end_byte: 41,
+                },
+                Extension {
+                    mnemonic: "TAS",
+                    start_byte: 42,
+                    end_byte: 46,
+                },
+            ],
+        });
+
+        assert_eq!(format!("{}", record), expected_string);
     }
 }
