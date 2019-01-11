@@ -76,4 +76,12 @@ mod tests {
 
         assert_eq!(format!("{}", record), expected_string);
     }
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn parse_doesnt_crash(s in "D\\PC*") {
+            DRecord::parse(&s);
+        }
+    }
 }
