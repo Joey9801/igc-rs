@@ -166,4 +166,19 @@ mod test {
         assert_eq!(format!("{}", Date::from_dmy(5, 10, 18)), "051018");
     }
 
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn time_parse_back_to_original(h in 0u8..24, m in 0u8..60, s in 0u8..60) {
+            let time = Time::from_hms(h, m, s);
+            prop_assert_eq!(Time::parse(&format!("{}", time)).unwrap(), time);
+        }
+
+        #[test]
+        #[allow(unused_must_use)]
+        fn date_parse_back_to_original(d in 1u8..32, m in 1u8..13, y in 0u8..100) {
+            let date = Date::from_dmy(d, m, y);
+            prop_assert_eq!(Date::parse(&format!("{}", date)).unwrap(), date);
+        }
+    }
 }
