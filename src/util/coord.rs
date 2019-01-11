@@ -82,6 +82,10 @@ impl FromStr for RawLatitude {
             "Raw latitude strings are 8 characters long"
         );
 
+        if !lat_string.is_char_boundary(2) || !lat_string.is_char_boundary(7) {
+            return Err(ParseError::SyntaxError);
+        }
+
         let degrees = lat_string[0..2].parse::<u8>()?;
         let minute_thousandths = lat_string[2..7].parse::<u16>()?;
         let sign = match &lat_string[7..8] {
@@ -152,6 +156,10 @@ impl FromStr for RawLongitude {
             "Raw longitude strings are 9 characters long"
         );
 
+        if !lon_string.is_char_boundary(3) || !lon_string.is_char_boundary(8) {
+            return Err(ParseError::SyntaxError);
+        }
+
         let degrees = lon_string[0..3].parse::<u8>()?;
         let minute_thousandths = lon_string[3..8].parse::<u16>()?;
         let sign = match &lon_string[8..9] {
@@ -206,6 +214,11 @@ impl FromStr for RawPosition {
 
     fn from_str(pos_string: &str) -> Result<Self, ParseError> {
         assert_eq!(pos_string.len(), 17);
+
+        if !pos_string.is_char_boundary(8) {
+            return Err(ParseError::SyntaxError);
+        }
+
         let lat = pos_string[0..8].parse()?;
         let lon = pos_string[8..17].parse()?;
 
@@ -238,6 +251,11 @@ mod test {
     }
 
     #[test]
+    fn raw_lat_parse_with_invalid_char_boundary() {
+        assert!("🌀aaaa".parse::<RawLatitude>().is_err());
+    }
+
+    #[test]
     fn raw_coord_parse_lon() {
         assert_eq!(
             RawLongitude::new(51, 52_265, Compass::East),
@@ -248,6 +266,11 @@ mod test {
             RawLongitude::new(51, 52_265, Compass::West),
             "05152265W".parse().unwrap()
         );
+    }
+
+    #[test]
+    fn raw_lon_parse_with_invalid_char_boundary() {
+        assert!("🌀aaaaa".parse::<RawLongitude>().is_err());
     }
 
     #[test]
@@ -283,6 +306,11 @@ mod test {
                 lon: RawLongitude::new(51, 52_265, Compass::West)
             }
         );
+    }
+
+    #[test]
+    fn parse_raw_position_with_invalid_char_boundary() {
+        assert!("🌀🌀🌀🌀a".parse::<RawPosition>().is_err());
     }
 
     #[test]
