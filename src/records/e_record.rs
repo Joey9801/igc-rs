@@ -18,6 +18,9 @@ impl<'a> ERecord<'a> {
         if line.len() < 10 {
             return Err(ParseError::SyntaxError);
         }
+        if !line.is_char_boundary(7) || !line.is_char_boundary(10) {
+            return Err(ParseError::SyntaxError);
+        }
 
         assert_eq!(line.as_bytes()[0], b'E');
 
@@ -68,6 +71,11 @@ mod tests {
     }
 
     #[test]
+    fn parse_with_invalid_char_boundary() {
+        assert!(ERecord::parse("Eⶠ𑛀  ").is_err());
+    }
+
+    #[test]
     fn erecord_format() {
         let expected_string = "E120515FOOText";
         let record = ERecord {
@@ -77,5 +85,13 @@ mod tests {
         };
 
         assert_eq!(format!("{}", record), expected_string);
+    }
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn parse_doesnt_crash(s in "E\\PC*") {
+            ERecord::parse(&s);
+        }
     }
 }
