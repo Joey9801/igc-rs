@@ -48,6 +48,10 @@ impl<'a> HRecord<'a> {
         if bytes.len() < 6 {
             return Err(ParseError::SyntaxError);
         }
+        if !line.is_char_boundary(2) || !line.is_char_boundary(5) {
+            return Err(ParseError::SyntaxError);
+        }
+
         let data_source = DataSource::from_byte(bytes[1]);
         let mnemonic = &line[2..5];
 
@@ -142,6 +146,11 @@ mod tests {
     }
 
     #[test]
+    fn parse_with_invalid_char_boundary() {
+        assert!(HRecord::parse("H\u{1107f}").is_err());
+    }
+
+    #[test]
     fn hrecord_format() {
         let expected_string = "HFGIDGLIDERID:D-KOOL";
         let record = HRecord {
@@ -152,5 +161,13 @@ mod tests {
         };
 
         assert_eq!(format!("{}", record), expected_string);
+    }
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn parse_doesnt_crash(s in "H\\PC*") {
+            HRecord::parse(&s);
+        }
     }
 }
