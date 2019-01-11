@@ -17,6 +17,13 @@ impl Time {
     pub fn parse(time_string: &str) -> Result<Self, ParseError> {
         assert_eq!(time_string.len(), 6);
 
+        if !time_string.is_char_boundary(2)
+            || !time_string.is_char_boundary(4)
+            || !time_string.is_char_boundary(6)
+        {
+            return Err(ParseError::SyntaxError);
+        }
+
         let hours = time_string[0..2].parse::<u8>()?;
         let minutes = time_string[2..4].parse::<u8>()?;
         let seconds = time_string[4..6].parse::<u8>()?;
@@ -79,6 +86,13 @@ impl Date {
     pub fn parse(date_string: &str) -> Result<Self, ParseError> {
         assert_eq!(date_string.len(), 6);
 
+        if !date_string.is_char_boundary(2)
+            || !date_string.is_char_boundary(4)
+            || !date_string.is_char_boundary(6)
+        {
+            return Err(ParseError::SyntaxError);
+        }
+
         let day = date_string[0..2].parse::<u8>()?;
         let month = date_string[2..4].parse::<u8>()?;
         let year = date_string[4..6].parse::<u8>()?;
@@ -127,6 +141,11 @@ mod test {
     }
 
     #[test]
+    fn time_parse_with_invalid_char_boundary() {
+        assert!(Time::parse("🌀aa").is_err());
+    }
+
+    #[test]
     fn time_fmt() {
         assert_eq!(format!("{}", Time::from_hms(1, 23, 45)), "012345");
     }
@@ -135,6 +154,11 @@ mod test {
     fn date_parse() {
         assert_eq!("010118".parse::<Date>().unwrap(), Date::from_dmy(1, 1, 18));
         assert_eq!("120757".parse::<Date>().unwrap(), Date::from_dmy(12, 7, 57));
+    }
+
+    #[test]
+    fn date_parse_with_invalid_char_boundary() {
+        assert!(Date::parse("🌀aa").is_err());
     }
 
     #[test]
