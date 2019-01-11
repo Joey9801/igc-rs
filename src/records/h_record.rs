@@ -45,6 +45,9 @@ impl<'a> HRecord<'a> {
         let bytes = line.as_bytes();
         assert_eq!(bytes[0], b'H');
 
+        if bytes.len() < 6 {
+            return Err(ParseError::SyntaxError);
+        }
         let data_source = DataSource::from_byte(bytes[1]);
         let mnemonic = &line[2..5];
 
@@ -106,6 +109,12 @@ mod tests {
         };
 
         assert_eq!(parsed_record, expected);
+    }
+
+    #[test]
+    fn parse_with_missing_content() {
+        assert!(HRecord::parse("H").is_err());
+        assert!(HRecord::parse("HXXX").is_err());
     }
 
     #[test]
