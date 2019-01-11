@@ -161,4 +161,12 @@ mod tests {
 
         assert_eq!(format!("{}", rec), expected_str);
     }
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn doesnt_crash(s in "\\PC*") {
+            Record::parse_line(&s);
+        }
+    }
 }
