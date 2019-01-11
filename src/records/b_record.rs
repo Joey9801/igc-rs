@@ -99,7 +99,7 @@ impl<'a> fmt::Display for BRecord<'a> {
 mod tests {
     use super::*;
 
-    use crate::records::extension::Extension;
+    use crate::records::extension::{Extension, ExtensionRange};
     use crate::util::{Compass, RawLatitude, RawLongitude, RawPosition, Time};
 
     #[test]
@@ -161,12 +161,14 @@ mod tests {
         };
 
         let extension = Extension {
-            start_byte: 36,
-            end_byte: 40,
+            range: ExtensionRange {
+                start_byte: 36,
+                end_byte: 40,
+            },
             mnemonic: "FOO",
         };
 
-        let extracted = record.get_extension(&extension).unwrap();
+        let extracted = record.get_extension(extension.range).unwrap();
         let expected = "01234";
         assert_eq!(extracted, expected);
     }

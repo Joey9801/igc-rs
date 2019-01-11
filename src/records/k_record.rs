@@ -47,7 +47,7 @@ impl<'a> fmt::Display for KRecord<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::records::extension::Extension;
+    use crate::records::extension::{Extension, ExtensionRange};
 
     #[test]
     fn krecord_parse() {
@@ -79,23 +79,29 @@ mod tests {
             extension_string: "FooTheBar",
         };
         let ext1 = Extension {
-            start_byte: 8,
-            end_byte: 10,
+            range: ExtensionRange {
+                start_byte: 8,
+                end_byte: 10,
+            },
             mnemonic: "One",
         };
         let ext2 = Extension {
-            start_byte: 11,
-            end_byte: 13,
+            range: ExtensionRange {
+                start_byte: 11,
+                end_byte: 13,
+            },
             mnemonic: "Two",
         };
         let ext3 = Extension {
-            start_byte: 14,
-            end_byte: 16,
+            range: ExtensionRange {
+                start_byte: 14,
+                end_byte: 16,
+            },
             mnemonic: "Th3",
         };
 
-        assert_eq!(record.get_extension(&ext1).unwrap(), "Foo");
-        assert_eq!(record.get_extension(&ext2).unwrap(), "The");
-        assert_eq!(record.get_extension(&ext3).unwrap(), "Bar");
+        assert_eq!(record.get_extension(ext1.range).unwrap(), "Foo");
+        assert_eq!(record.get_extension(ext2.range).unwrap(), "The");
+        assert_eq!(record.get_extension(ext3.range).unwrap(), "Bar");
     }
 }

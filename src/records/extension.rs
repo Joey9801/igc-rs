@@ -3,13 +3,9 @@ use std::{fmt, str};
 use crate::util::ParseError;
 
 /// Defines a generic record extension, as appears in I and J records.
-///
-/// The start and end bytes are defined as being 1-indexed including the initial record type
-/// discrimination character.
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Extension<'a> {
-    pub start_byte: u8,
-    pub end_byte: u8,
+    pub range: ExtensionRange,
     pub mnemonic: &'a str,
 }
 
@@ -28,6 +24,41 @@ impl<'a> Extension<'a> {
             return Err(ParseError::SyntaxError);
         }
 
+        let range = string[0..4].parse()?;
+        let mnemonic = &string[4..7];
+
+        Ok(Self { range, mnemonic })
+    }
+}
+
+impl<'a> fmt::Display for Extension<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}{}", self.range, self.mnemonic)
+    }
+}
+
+/// Defines the range part of a  generic record extension, as appears in I and J records.
+///
+/// The start and end bytes are defined as being 1-indexed including the initial record type
+/// discrimination character.
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct ExtensionRange {
+    pub start_byte: u8,
+    pub end_byte: u8,
+}
+
+impl ExtensionRange {
+    /// Parse an single extension definition range.
+    ///
+    /// Expected format:
+    ///     SSEE
+    /// SS  - start byte - 0-9
+    /// EE  - end byte   - 0-9
+    pub fn parse(string: &str) -> Result<Self, ParseError> {
+        if string.len() != 4 {
+            return Err(ParseError::SyntaxError);
+        }
+
         let start_byte = string[0..2].parse::<u8>()?;
         let end_byte = string[2..4].parse::<u8>()?;
 
@@ -35,23 +66,24 @@ impl<'a> Extension<'a> {
             return Err(ParseError::BadExtension);
         }
 
-        let mnemonic = &string[4..7];
-
         Ok(Self {
             start_byte,
             end_byte,
-            mnemonic,
         })
     }
 }
 
-impl<'a> fmt::Display for Extension<'a> {
+impl str::FromStr for ExtensionRange {
+    type Err = ParseError;
+
+    fn from_str(s: &str) -> Result<Self, ParseError> {
+        Self::parse(s)
+    }
+}
+
+impl<'a> fmt::Display for ExtensionRange {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{:02}{:02}{}",
-            self.start_byte, self.end_byte, self.mnemonic
-        )
+        write!(f, "{:02}{:02}", self.start_byte, self.end_byte,)
     }
 }
 
@@ -62,19 +94,16 @@ pub trait Extendable {
     fn extension_string(&self) -> &str;
 
     /// Get a given extension from the record implementing this trait.
-    fn get_extension<'a, 'b>(
-        &'a self,
-        extension: &'b Extension<'a>,
-    ) -> Result<&'a str, ParseError> {
-        if (extension.start_byte as usize) < Self::BASE_LENGTH {
+    fn get_extension(&self, range: ExtensionRange) -> Result<&str, ParseError> {
+        if (range.start_byte as usize) < Self::BASE_LENGTH {
             return Err(ParseError::BadExtension);
         }
 
         let ext_str = self.extension_string();
 
         // The start/end bytes are specified as being 1-indexed
-        let start = extension.start_byte as usize - Self::BASE_LENGTH - 1;
-        let end = extension.end_byte as usize - Self::BASE_LENGTH;
+        let start = range.start_byte as usize - Self::BASE_LENGTH - 1;
+        let end = range.end_byte as usize - Self::BASE_LENGTH;
 
         if start >= ext_str.len() {
             Err(ParseError::MissingExtension)
@@ -176,18 +205,24 @@ mod tests {
             extensions: vec![
                 Extension {
                     mnemonic: "FXA",
-                    start_byte: 36,
-                    end_byte: 38,
+                    range: ExtensionRange {
+                        start_byte: 36,
+                        end_byte: 38,
+                    },
                 },
                 Extension {
                     mnemonic: "ENL",
-                    start_byte: 39,
-                    end_byte: 41,
+                    range: ExtensionRange {
+                        start_byte: 39,
+                        end_byte: 41,
+                    },
                 },
                 Extension {
                     mnemonic: "TAS",
-                    start_byte: 42,
-                    end_byte: 46,
+                    range: ExtensionRange {
+                        start_byte: 42,
+                        end_byte: 46,
+                    },
                 },
             ],
         };
@@ -203,18 +238,24 @@ mod tests {
             extensions: vec![
                 Extension {
                     mnemonic: "FXA",
-                    start_byte: 36,
-                    end_byte: 38,
+                    range: ExtensionRange {
+                        start_byte: 36,
+                        end_byte: 38,
+                    },
                 },
                 Extension {
                     mnemonic: "ENL",
-                    start_byte: 39,
-                    end_byte: 41,
+                    range: ExtensionRange {
+                        start_byte: 39,
+                        end_byte: 41,
+                    },
                 },
                 Extension {
                     mnemonic: "TAS",
-                    start_byte: 42,
-                    end_byte: 46,
+                    range: ExtensionRange {
+                        start_byte: 42,
+                        end_byte: 46,
+                    },
                 },
             ],
         });
@@ -230,18 +271,24 @@ mod tests {
             extensions: vec![
                 Extension {
                     mnemonic: "FXA",
-                    start_byte: 36,
-                    end_byte: 38,
+                    range: ExtensionRange {
+                        start_byte: 36,
+                        end_byte: 38,
+                    },
                 },
                 Extension {
                     mnemonic: "ENL",
-                    start_byte: 39,
-                    end_byte: 41,
+                    range: ExtensionRange {
+                        start_byte: 39,
+                        end_byte: 41,
+                    },
                 },
                 Extension {
                     mnemonic: "TAS",
-                    start_byte: 42,
-                    end_byte: 46,
+                    range: ExtensionRange {
+                        start_byte: 42,
+                        end_byte: 46,
+                    },
                 },
             ],
         });
