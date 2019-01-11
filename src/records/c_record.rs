@@ -33,6 +33,14 @@ impl<'a> CRecordDeclaration<'a> {
         if line.len() < 25 {
             return Err(ParseError::SyntaxError);
         }
+        if !line.is_char_boundary(7)
+            || !line.is_char_boundary(13)
+            || !line.is_char_boundary(19)
+            || !line.is_char_boundary(23)
+            || !line.is_char_boundary(25)
+        {
+            return Err(ParseError::SyntaxError);
+        }
 
         assert!(line.as_bytes()[0] == b'C');
 
@@ -92,6 +100,9 @@ impl<'a> CRecordTurnpoint<'a> {
     /// ```
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
         if line.len() < 18 {
+            return Err(ParseError::SyntaxError);
+        }
+        if !line.is_char_boundary(18) {
             return Err(ParseError::SyntaxError);
         }
 
@@ -165,6 +176,11 @@ mod tests {
     }
 
     #[test]
+    fn c_record_declaration_parse_with_invalid_char_boundary() {
+        assert!(CRecordDeclaration::parse("C𑠀𖭽ₐ𞸧\u{1daa1}").is_err());
+    }
+
+    #[test]
     fn c_record_declaration_format() {
         let expected_string = "C230718092044000000000204Foo task";
         let mut declaration = CRecordDeclaration {
@@ -212,5 +228,24 @@ mod tests {
     #[test]
     fn c_record_turnpoint_parse_with_missing_content() {
         assert!(CRecordTurnpoint::parse("C").is_err());
+    }
+
+    #[test]
+    fn c_record_turnpoint_parse_with_invalid_char_boundary() {
+        assert!(CRecordTurnpoint::parse("C𑠀𖭽ₐ𞸧\u{1daa1}").is_err());
+    }
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn parse_declaration_doesnt_crash(s in "C\\PC*") {
+            CRecordDeclaration::parse(&s);
+        }
+
+        #[test]
+        #[allow(unused_must_use)]
+        fn parse_turnpoint_doesnt_crash(s in "C\\PC*") {
+            CRecordTurnpoint::parse(&s);
+        }
     }
 }
