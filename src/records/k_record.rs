@@ -79,24 +79,15 @@ mod tests {
             extension_string: "FooTheBar",
         };
         let ext1 = Extension {
-            range: ExtensionRange {
-                start_byte: 8,
-                end_byte: 10,
-            },
+            range: ExtensionRange::new(8, 10),
             mnemonic: "One",
         };
         let ext2 = Extension {
-            range: ExtensionRange {
-                start_byte: 11,
-                end_byte: 13,
-            },
+            range: ExtensionRange::new(11, 13),
             mnemonic: "Two",
         };
         let ext3 = Extension {
-            range: ExtensionRange {
-                start_byte: 14,
-                end_byte: 16,
-            },
+            range: ExtensionRange::new(14, 16),
             mnemonic: "Th3",
         };
 

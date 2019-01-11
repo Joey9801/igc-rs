@@ -48,6 +48,20 @@ pub struct ExtensionRange {
 }
 
 impl ExtensionRange {
+    /// Creates a new ExtensionRange instance.
+    ///
+    /// Checks if `start_byte` and `end_byte` have valid values.
+    pub fn new(start_byte: u8, end_byte: u8) -> Self {
+        // it can't be `0` because the values are 1-indexed,
+        // and it can't be `1` because that would be the `B` or `K` character.
+        assert!(start_byte > 2);
+        assert!(end_byte >= start_byte);
+        Self {
+            start_byte,
+            end_byte,
+        }
+    }
+
     /// Parse an single extension definition range.
     ///
     /// Expected format:
@@ -205,24 +219,15 @@ mod tests {
             extensions: vec![
                 Extension {
                     mnemonic: "FXA",
-                    range: ExtensionRange {
-                        start_byte: 36,
-                        end_byte: 38,
-                    },
+                    range: ExtensionRange::new(36, 38),
                 },
                 Extension {
                     mnemonic: "ENL",
-                    range: ExtensionRange {
-                        start_byte: 39,
-                        end_byte: 41,
-                    },
+                    range: ExtensionRange::new(39, 41),
                 },
                 Extension {
                     mnemonic: "TAS",
-                    range: ExtensionRange {
-                        start_byte: 42,
-                        end_byte: 46,
-                    },
+                    range: ExtensionRange::new(42, 46),
                 },
             ],
         };
@@ -238,24 +243,15 @@ mod tests {
             extensions: vec![
                 Extension {
                     mnemonic: "FXA",
-                    range: ExtensionRange {
-                        start_byte: 36,
-                        end_byte: 38,
-                    },
+                    range: ExtensionRange::new(36, 38),
                 },
                 Extension {
                     mnemonic: "ENL",
-                    range: ExtensionRange {
-                        start_byte: 39,
-                        end_byte: 41,
-                    },
+                    range: ExtensionRange::new(39, 41),
                 },
                 Extension {
                     mnemonic: "TAS",
-                    range: ExtensionRange {
-                        start_byte: 42,
-                        end_byte: 46,
-                    },
+                    range: ExtensionRange::new(42, 46),
                 },
             ],
         });
@@ -271,24 +267,15 @@ mod tests {
             extensions: vec![
                 Extension {
                     mnemonic: "FXA",
-                    range: ExtensionRange {
-                        start_byte: 36,
-                        end_byte: 38,
-                    },
+                    range: ExtensionRange::new(36, 38),
                 },
                 Extension {
                     mnemonic: "ENL",
-                    range: ExtensionRange {
-                        start_byte: 39,
-                        end_byte: 41,
-                    },
+                    range: ExtensionRange::new(39, 41),
                 },
                 Extension {
                     mnemonic: "TAS",
-                    range: ExtensionRange {
-                        start_byte: 42,
-                        end_byte: 46,
-                    },
+                    range: ExtensionRange::new(42, 46),
                 },
             ],
         });

@@ -161,10 +161,7 @@ mod tests {
         };
 
         let extension = Extension {
-            range: ExtensionRange {
-                start_byte: 36,
-                end_byte: 40,
-            },
+            range: ExtensionRange::new(36, 40),
             mnemonic: "FOO",
         };
 
