@@ -40,6 +40,14 @@ impl<'a> BRecord<'a> {
         if line.len() < Self::BASE_LENGTH {
             return Err(ParseError::SyntaxError);
         }
+        if !line.is_char_boundary(7)
+            || !line.is_char_boundary(24)
+            || !line.is_char_boundary(25)
+            || !line.is_char_boundary(30)
+            || !line.is_char_boundary(35)
+        {
+            return Err(ParseError::SyntaxError);
+        }
 
         let timestamp = line[1..7].parse()?;
         let pos = line[7..24].parse()?;
@@ -129,6 +137,12 @@ mod tests {
     }
 
     #[test]
+    fn parse_with_invalid_char_boundary() {
+        assert!(BRecord::parse("B🌀®0  A¡𞤀𐘀 𐀀a0⮘ ে").is_err());
+        assert!(BRecord::parse("BA𑩐 𫠠A🀰\u{1107f}0®A0🡠aaAஜ").is_err());
+    }
+
+    #[test]
     fn simple_brecord_format() {
         let expected = "B0941145152265N00032642WA00115-0116FooExtensionString";
         let record = BRecord {
@@ -169,5 +183,13 @@ mod tests {
         let extracted = record.get_extension(&extension).unwrap();
         let expected = "01234";
         assert_eq!(extracted, expected);
+    }
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn parse_doesnt_crash(s in "B\\PC*") {
+            BRecord::parse(&s);
+        }
     }
 }
