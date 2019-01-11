@@ -91,7 +91,10 @@ impl<'a> CRecordTurnpoint<'a> {
     /// assert_eq!(record.turnpoint_name, Some("LBZ-Leighton Buzzard NE"));
     /// ```
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {
-        assert!(line.len() >= 18);
+        if line.len() < 18 {
+            return Err(ParseError::SyntaxError);
+        }
+
         assert!(line.as_bytes()[0] == b'C');
 
         let position = line[1..18].parse()?;
@@ -157,6 +160,11 @@ mod tests {
     }
 
     #[test]
+    fn c_record_declaration_parse_with_missing_content() {
+        assert!(CRecordDeclaration::parse("C").is_err());
+    }
+
+    #[test]
     fn c_record_declaration_format() {
         let expected_string = "C230718092044000000000204Foo task";
         let mut declaration = CRecordDeclaration {
@@ -199,5 +207,10 @@ mod tests {
         };
 
         assert_eq!(parsed_turnpoint, expected);
+    }
+
+    #[test]
+    fn c_record_turnpoint_parse_with_missing_content() {
+        assert!(CRecordTurnpoint::parse("C").is_err());
     }
 }
