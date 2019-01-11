@@ -27,6 +27,8 @@ mod extension;
 mod f_record;
 mod g_record;
 mod h_record;
+mod i_record;
+mod j_record;
 mod k_record;
 mod l_record;
 
@@ -35,10 +37,12 @@ pub use self::b_record::BRecord;
 pub use self::c_record::{CRecordDeclaration, CRecordTurnpoint};
 pub use self::d_record::DRecord;
 pub use self::e_record::ERecord;
-pub use self::extension::{Extendable, Extension, IRecord, JRecord};
+pub use self::extension::{Extendable, Extension};
 pub use self::f_record::FRecord;
 pub use self::g_record::GRecord;
 pub use self::h_record::{DataSource, HRecord};
+pub use self::i_record::IRecord;
+pub use self::j_record::JRecord;
 pub use self::k_record::KRecord;
 pub use self::l_record::LRecord;
 
