@@ -53,7 +53,8 @@ impl<'a> HRecord<'a> {
 
         let friendly_name;
         let data;
-        if let Some(colon_idx) = line.find(':') {
+        if let Some(colon_idx) = &line[5..].find(':') {
+            let colon_idx = *colon_idx + 5;
             friendly_name = Some(&line[5..colon_idx]);
             data = &line[colon_idx + 1..];
         } else {
@@ -115,6 +116,29 @@ mod tests {
     fn parse_with_missing_content() {
         assert!(HRecord::parse("H").is_err());
         assert!(HRecord::parse("HXXX").is_err());
+    }
+
+    #[test]
+    fn parse_with_early_colon() {
+        assert_eq!(
+            HRecord::parse("H:00 a ").unwrap(),
+            HRecord {
+                data_source: DataSource::Unrecognized(b':'),
+                mnemonic: "00 ",
+                friendly_name: None,
+                data: "a ",
+            }
+        );
+
+        assert_eq!(
+            HRecord::parse("HAaA :a").unwrap(),
+            HRecord {
+                data_source: DataSource::Unrecognized(b'A'),
+                mnemonic: "aA ",
+                friendly_name: Some(""),
+                data: "a",
+            }
+        );
     }
 
     #[test]
