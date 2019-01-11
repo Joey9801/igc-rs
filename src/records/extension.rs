@@ -12,6 +12,15 @@ pub struct Extension<'a> {
 impl<'a> Extension<'a> {
     pub const STRING_LENGTH: usize = 7;
 
+    /// Creates a new Extension instance.
+    ///
+    /// Checks if `mnemonic`, `start_byte` and `end_byte` have valid values.
+    pub fn new(mnemonic: &'a str, start_byte: u8, end_byte: u8) -> Self {
+        assert_eq!(mnemonic.len(), 3);
+        let range = ExtensionRange::new(start_byte, end_byte);
+        Self { mnemonic, range }
+    }
+
     /// Parse an single extension definition string.
     ///
     /// Expected format:
@@ -217,18 +226,9 @@ mod tests {
         let expected = ExtensionDefRecord {
             num_extensions: 3,
             extensions: vec![
-                Extension {
-                    mnemonic: "FXA",
-                    range: ExtensionRange::new(36, 38),
-                },
-                Extension {
-                    mnemonic: "ENL",
-                    range: ExtensionRange::new(39, 41),
-                },
-                Extension {
-                    mnemonic: "TAS",
-                    range: ExtensionRange::new(42, 46),
-                },
+                Extension::new("FXA", 36, 38),
+                Extension::new("ENL", 39, 41),
+                Extension::new("TAS", 42, 46),
             ],
         };
 
@@ -241,18 +241,9 @@ mod tests {
         let record = IRecord(ExtensionDefRecord {
             num_extensions: 3,
             extensions: vec![
-                Extension {
-                    mnemonic: "FXA",
-                    range: ExtensionRange::new(36, 38),
-                },
-                Extension {
-                    mnemonic: "ENL",
-                    range: ExtensionRange::new(39, 41),
-                },
-                Extension {
-                    mnemonic: "TAS",
-                    range: ExtensionRange::new(42, 46),
-                },
+                Extension::new("FXA", 36, 38),
+                Extension::new("ENL", 39, 41),
+                Extension::new("TAS", 42, 46),
             ],
         });
 
@@ -265,18 +256,9 @@ mod tests {
         let record = JRecord(ExtensionDefRecord {
             num_extensions: 3,
             extensions: vec![
-                Extension {
-                    mnemonic: "FXA",
-                    range: ExtensionRange::new(36, 38),
-                },
-                Extension {
-                    mnemonic: "ENL",
-                    range: ExtensionRange::new(39, 41),
-                },
-                Extension {
-                    mnemonic: "TAS",
-                    range: ExtensionRange::new(42, 46),
-                },
+                Extension::new("FXA", 36, 38),
+                Extension::new("ENL", 39, 41),
+                Extension::new("TAS", 42, 46),
             ],
         });
 

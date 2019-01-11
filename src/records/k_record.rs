@@ -78,18 +78,9 @@ mod tests {
             time: Time::from_hms(9, 52, 14),
             extension_string: "FooTheBar",
         };
-        let ext1 = Extension {
-            range: ExtensionRange::new(8, 10),
-            mnemonic: "One",
-        };
-        let ext2 = Extension {
-            range: ExtensionRange::new(11, 13),
-            mnemonic: "Two",
-        };
-        let ext3 = Extension {
-            range: ExtensionRange::new(14, 16),
-            mnemonic: "Th3",
-        };
+        let ext1 = Extension::new("One", 8, 10);
+        let ext2 = Extension::new("Two", 11, 13);
+        let ext3 = Extension::new("Th3", 14, 16);
 
         assert_eq!(record.get_extension(ext1.range).unwrap(), "Foo");
         assert_eq!(record.get_extension(ext2.range).unwrap(), "The");
