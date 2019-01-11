@@ -23,3 +23,16 @@ impl<'a> fmt::Display for GRecord<'a> {
         write!(f, "G{}", self.data)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn parse_doesnt_crash(s in "G\\PC*") {
+            GRecord::parse(&s);
+        }
+    }
+}
