@@ -324,4 +324,26 @@ mod test {
             -51.87108333333333f64
         );
     }
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn raw_lat_parse_back_to_original(d in 0u8..90, m in 0u16..60_000) {
+            let lat = RawLatitude::new(d, m, Compass::North);
+            prop_assert_eq!(format!("{}", lat).parse::<RawLatitude>().unwrap(), lat);
+
+            let lat = RawLatitude::new(d, m, Compass::South);
+            prop_assert_eq!(format!("{}", lat).parse::<RawLatitude>().unwrap(), lat);
+        }
+
+        #[test]
+        #[allow(unused_must_use)]
+        fn raw_lon_parse_back_to_original(d in 0u8..180, m in 0u16..60_000) {
+            let lon = RawLongitude::new(d, m, Compass::East);
+            prop_assert_eq!(format!("{}", lon).parse::<RawLongitude>().unwrap(), lon);
+
+            let lon = RawLongitude::new(d, m, Compass::West);
+            prop_assert_eq!(format!("{}", lon).parse::<RawLongitude>().unwrap(), lon);
+        }
+    }
 }
