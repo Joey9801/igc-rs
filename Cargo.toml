@@ -10,3 +10,8 @@ edition = "2018"
 
 [dev-dependencies]
 approx = "^0.3.0"
+criterion = "0.2"
+
+[[bench]]
+name = "benchmark"
+harness = false
