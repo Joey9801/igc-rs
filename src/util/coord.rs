@@ -82,7 +82,7 @@ impl FromStr for RawLatitude {
             "Raw latitude strings are 8 characters long"
         );
 
-        if !lat_string.is_char_boundary(2) || !lat_string.is_char_boundary(7) {
+        if !lat_string.is_ascii() {
             return Err(ParseError::SyntaxError);
         }
 
@@ -156,7 +156,7 @@ impl FromStr for RawLongitude {
             "Raw longitude strings are 9 characters long"
         );
 
-        if !lon_string.is_char_boundary(3) || !lon_string.is_char_boundary(8) {
+        if !lon_string.is_ascii() {
             return Err(ParseError::SyntaxError);
         }
 
@@ -215,7 +215,7 @@ impl FromStr for RawPosition {
     fn from_str(pos_string: &str) -> Result<Self, ParseError> {
         assert_eq!(pos_string.len(), 17);
 
-        if !pos_string.is_char_boundary(8) {
+        if !pos_string.is_ascii() {
             return Err(ParseError::SyntaxError);
         }
 

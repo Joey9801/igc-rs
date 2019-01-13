@@ -14,7 +14,7 @@ impl<'a> FRecord<'a> {
         if line.len() < 7 {
             return Err(ParseError::SyntaxError);
         }
-        if !line.is_char_boundary(7) {
+        if !line.is_ascii() {
             return Err(ParseError::SyntaxError);
         }
 

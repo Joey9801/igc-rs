@@ -33,12 +33,7 @@ impl<'a> CRecordDeclaration<'a> {
         if line.len() < 25 {
             return Err(ParseError::SyntaxError);
         }
-        if !line.is_char_boundary(7)
-            || !line.is_char_boundary(13)
-            || !line.is_char_boundary(19)
-            || !line.is_char_boundary(23)
-            || !line.is_char_boundary(25)
-        {
+        if !line.bytes().take(25).all(|b| b.is_ascii()) {
             return Err(ParseError::SyntaxError);
         }
 
@@ -102,7 +97,7 @@ impl<'a> CRecordTurnpoint<'a> {
         if line.len() < 18 {
             return Err(ParseError::SyntaxError);
         }
-        if !line.is_char_boundary(18) {
+        if !line.bytes().take(18).all(|b| b.is_ascii()) {
             return Err(ParseError::SyntaxError);
         }
 

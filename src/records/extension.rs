@@ -112,7 +112,7 @@ impl<'a> ExtensionDefRecord<'a> {
         if line.len() < 3 {
             return Err(ParseError::SyntaxError);
         }
-        if !line.as_bytes().iter().all(u8::is_ascii) {
+        if !line.is_ascii() {
             return Err(ParseError::SyntaxError);
         }
 

@@ -17,10 +17,7 @@ impl Time {
     pub fn parse(time_string: &str) -> Result<Self, ParseError> {
         assert_eq!(time_string.len(), 6);
 
-        if !time_string.is_char_boundary(2)
-            || !time_string.is_char_boundary(4)
-            || !time_string.is_char_boundary(6)
-        {
+        if !time_string.is_ascii() {
             return Err(ParseError::SyntaxError);
         }
 
@@ -86,10 +83,7 @@ impl Date {
     pub fn parse(date_string: &str) -> Result<Self, ParseError> {
         assert_eq!(date_string.len(), 6);
 
-        if !date_string.is_char_boundary(2)
-            || !date_string.is_char_boundary(4)
-            || !date_string.is_char_boundary(6)
-        {
+        if !date_string.is_ascii() {
             return Err(ParseError::SyntaxError);
         }
 

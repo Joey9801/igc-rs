@@ -18,7 +18,7 @@ impl<'a> ERecord<'a> {
         if line.len() < 10 {
             return Err(ParseError::SyntaxError);
         }
-        if !line.is_char_boundary(7) || !line.is_char_boundary(10) {
+        if !line.bytes().take(10).all(|b| b.is_ascii()) {
             return Err(ParseError::SyntaxError);
         }
 

@@ -40,12 +40,7 @@ impl<'a> BRecord<'a> {
         if line.len() < Self::BASE_LENGTH {
             return Err(ParseError::SyntaxError);
         }
-        if !line.is_char_boundary(7)
-            || !line.is_char_boundary(24)
-            || !line.is_char_boundary(25)
-            || !line.is_char_boundary(30)
-            || !line.is_char_boundary(35)
-        {
+        if !line.is_ascii() {
             return Err(ParseError::SyntaxError);
         }
 

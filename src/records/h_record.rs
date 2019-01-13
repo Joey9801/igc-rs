@@ -48,7 +48,7 @@ impl<'a> HRecord<'a> {
         if bytes.len() < 6 {
             return Err(ParseError::SyntaxError);
         }
-        if !line.is_char_boundary(2) || !line.is_char_boundary(5) {
+        if !line.bytes().take(5).all(|b| b.is_ascii()) {
             return Err(ParseError::SyntaxError);
         }
 
