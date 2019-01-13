@@ -83,7 +83,7 @@ impl FromStr for RawLatitude {
         );
 
         if !lat_string.is_ascii() {
-            return Err(ParseError::SyntaxError);
+            return Err(ParseError::NonASCIICharacters);
         }
 
         let degrees = lat_string[0..2].parse::<u8>()?;
@@ -157,7 +157,7 @@ impl FromStr for RawLongitude {
         );
 
         if !lon_string.is_ascii() {
-            return Err(ParseError::SyntaxError);
+            return Err(ParseError::NonASCIICharacters);
         }
 
         let degrees = lon_string[0..3].parse::<u8>()?;
@@ -216,7 +216,7 @@ impl FromStr for RawPosition {
         assert_eq!(pos_string.len(), 17);
 
         if !pos_string.is_ascii() {
-            return Err(ParseError::SyntaxError);
+            return Err(ParseError::NonASCIICharacters);
         }
 
         let lat = pos_string[0..8].parse()?;

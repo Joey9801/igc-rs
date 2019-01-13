@@ -113,7 +113,7 @@ impl<'a> ExtensionDefRecord<'a> {
             return Err(ParseError::SyntaxError);
         }
         if !line.is_ascii() {
-            return Err(ParseError::SyntaxError);
+            return Err(ParseError::NonASCIICharacters);
         }
 
         let num_extensions = line[1..3].parse::<u8>()?;

@@ -19,7 +19,7 @@ impl<'a> ERecord<'a> {
             return Err(ParseError::SyntaxError);
         }
         if !line.bytes().take(10).all(|b| b.is_ascii()) {
-            return Err(ParseError::SyntaxError);
+            return Err(ParseError::NonASCIICharacters);
         }
 
         assert_eq!(line.as_bytes()[0], b'E');

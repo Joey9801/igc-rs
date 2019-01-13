@@ -7,6 +7,7 @@ pub enum ParseError {
     IOError(io::Error),
     Utf8Error(std::str::Utf8Error),
     SyntaxError,
+    NonASCIICharacters,
     NumberOutOfRange,
     BadExtension,
     MissingExtension,

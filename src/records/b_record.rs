@@ -41,7 +41,7 @@ impl<'a> BRecord<'a> {
             return Err(ParseError::SyntaxError);
         }
         if !line.is_ascii() {
-            return Err(ParseError::SyntaxError);
+            return Err(ParseError::NonASCIICharacters);
         }
 
         let timestamp = line[1..7].parse()?;

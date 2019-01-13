@@ -172,7 +172,7 @@ impl<'a> ARecord<'a> {
             return Err(ParseError::SyntaxError);
         }
         if !line.bytes().take(7).all(|b| b.is_ascii()) {
-            return Err(ParseError::SyntaxError);
+            return Err(ParseError::NonASCIICharacters);
         }
 
         let manufacturer = Manufacturer::parse_triple_char(&line[1..4]);

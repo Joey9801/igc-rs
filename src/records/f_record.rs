@@ -15,7 +15,7 @@ impl<'a> FRecord<'a> {
             return Err(ParseError::SyntaxError);
         }
         if !line.is_ascii() {
-            return Err(ParseError::SyntaxError);
+            return Err(ParseError::NonASCIICharacters);
         }
 
         let time = line[1..7].parse()?;

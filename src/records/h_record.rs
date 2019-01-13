@@ -49,7 +49,7 @@ impl<'a> HRecord<'a> {
             return Err(ParseError::SyntaxError);
         }
         if !line.bytes().take(5).all(|b| b.is_ascii()) {
-            return Err(ParseError::SyntaxError);
+            return Err(ParseError::NonASCIICharacters);
         }
 
         let data_source = DataSource::from_byte(bytes[1]);

@@ -34,7 +34,7 @@ impl<'a> CRecordDeclaration<'a> {
             return Err(ParseError::SyntaxError);
         }
         if !line.bytes().take(25).all(|b| b.is_ascii()) {
-            return Err(ParseError::SyntaxError);
+            return Err(ParseError::NonASCIICharacters);
         }
 
         assert!(line.as_bytes()[0] == b'C');
@@ -98,7 +98,7 @@ impl<'a> CRecordTurnpoint<'a> {
             return Err(ParseError::SyntaxError);
         }
         if !line.bytes().take(18).all(|b| b.is_ascii()) {
-            return Err(ParseError::SyntaxError);
+            return Err(ParseError::NonASCIICharacters);
         }
 
         assert!(line.as_bytes()[0] == b'C');

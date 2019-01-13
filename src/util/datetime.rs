@@ -18,7 +18,7 @@ impl Time {
         assert_eq!(time_string.len(), 6);
 
         if !time_string.is_ascii() {
-            return Err(ParseError::SyntaxError);
+            return Err(ParseError::NonASCIICharacters);
         }
 
         let hours = time_string[0..2].parse::<u8>()?;
@@ -84,7 +84,7 @@ impl Date {
         assert_eq!(date_string.len(), 6);
 
         if !date_string.is_ascii() {
-            return Err(ParseError::SyntaxError);
+            return Err(ParseError::NonASCIICharacters);
         }
 
         let day = date_string[0..2].parse::<u8>()?;
