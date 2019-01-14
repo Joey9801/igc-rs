@@ -21,7 +21,7 @@ impl<'a> FRecord<'a> {
         let time = line[1..7].parse()?;
 
         let array_str = &line[7..];
-        if array_str.len() < 2 || array_str.len() % 2 != 0 {
+        if array_str.len() % 2 != 0 {
             return Err(ParseError::SyntaxError);
         }
         let satellites = SatelliteArray::new(array_str);
@@ -85,6 +85,18 @@ mod tests {
         let expected_record = FRecord {
             time: Time::from_hms(9, 52, 12),
             satellites: SatelliteArray::new("AABBCCDDEE"),
+        };
+
+        assert_eq!(parsed_record, expected_record);
+    }
+
+    #[test]
+    fn frecord_parse_empty() {
+        let sample_string = "F135456";
+        let parsed_record = FRecord::parse(sample_string).unwrap();
+        let expected_record = FRecord {
+            time: Time::from_hms(13, 54, 56),
+            satellites: SatelliteArray::new(""),
         };
 
         assert_eq!(parsed_record, expected_record);
