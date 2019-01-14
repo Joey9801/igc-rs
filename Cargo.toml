@@ -11,6 +11,7 @@ edition = "2018"
 [dev-dependencies]
 approx = "^0.3.0"
 criterion = "0.2"
+encoding = "0.2.33"
 proptest = "0.8.7"
 
 [[bench]]

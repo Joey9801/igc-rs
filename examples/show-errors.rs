@@ -1,7 +1,10 @@
+use std::borrow::Cow;
 use std::env;
 use std::fs;
 use std::path;
-use std::io::{BufRead,BufReader};
+
+use encoding::all::{ISO_8859_1, UTF_8};
+use encoding::{DecoderTrap, Encoding};
 
 use igc::records::Record;
 
@@ -24,25 +27,24 @@ fn main() {
         let filename = path.file_name().unwrap().to_str().unwrap();
 
         // open file in buffered reader
-        let file = fs::File::open(path.clone()).unwrap();
+        let bytes = fs::read(&path).unwrap();
+        let text = match as_text(&bytes) {
+            Err(error) => {
+                println!("{} ERROR {}", filename, error);
+                continue;
+            }
+            Ok(text) => text,
+        };
 
-        for (i, result) in BufReader::new(file).lines().enumerate() {
+        for (i, line) in text.lines().enumerate() {
             let line_number = i + 1;
-
-            let line = match result {
-                Err(error) => {
-                    println!("{}:{} ERROR {}", filename, line_number, error);
-                    continue;
-                },
-                Ok(line) => line,
-            };
 
             match Record::parse_line(&line) {
                 Err(error) => {
                     println!("{}:{} ERROR {:?}: {}", filename, line_number, error, line);
                     continue;
-                },
-                Ok(_) => {},
+                }
+                Ok(_) => {}
             };
         }
     }
@@ -51,11 +53,16 @@ fn main() {
 fn is_igc_file(path: &path::PathBuf) -> bool {
     match path.extension() {
         None => false,
-        Some(os_str) => {
-            match os_str.to_str() {
-                Some("igc") => true,
-                _ => false,
-            }
-        }
+        Some(os_str) => match os_str.to_str() {
+            Some("igc") => true,
+            _ => false,
+        },
     }
+}
+
+pub fn as_text(bytes: &[u8]) -> Result<String, Cow<str>> {
+    let bytes = bytes.into();
+    UTF_8
+        .decode(bytes, DecoderTrap::Strict)
+        .or_else(|_| ISO_8859_1.decode(bytes, DecoderTrap::Strict))
 }
