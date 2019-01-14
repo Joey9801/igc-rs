@@ -183,6 +183,46 @@ impl<'a> ARecord<'a> {
         if line.len() < 7 {
             return Err(ParseError::SyntaxError);
         }
+
+        // check for old spec format (e.g. `AC00069`)
+        //
+        // all known loggers that use this old format use numeric serial numbers
+        // so we assume that to be a sufficient heuristic to detect this format
+        if line.bytes().skip(2).take(5).all(|b| b.is_ascii_digit()) {
+            let manufacturer_byte = line.as_bytes()[1];
+            if !manufacturer_byte.is_ascii() {
+                return Err(ParseError::NonASCIICharacters);
+            }
+
+            let id_extension = if line.len() > 7 {
+                Some(&line[7..])
+            } else {
+                None
+            };
+
+            let manufacturer = Manufacturer::parse_single_char(manufacturer_byte);
+            return Ok(ARecord::new(manufacturer, &line[2..7], id_extension));
+        }
+
+        // check for old spec format with three-letter manufacturer (e.g. `AFIL01460FLIGHT:1`)
+        //
+        // all known loggers that use this old format use numeric serial numbers
+        // so we assume that to be a sufficient heuristic to detect this format
+        if line.len() >= 9 && line.bytes().skip(4).take(5).all(|b| b.is_ascii_digit()) {
+            if !line.bytes().take(4).all(|b| b.is_ascii()) {
+                return Err(ParseError::NonASCIICharacters);
+            }
+
+            let id_extension = if line.len() > 9 {
+                Some(&line[9..])
+            } else {
+                None
+            };
+
+            let manufacturer = Manufacturer::parse_triple_char(&line[1..4]);
+            return Ok(ARecord::new(manufacturer, &line[4..9], id_extension));
+        }
+
         if !line.bytes().take(7).all(|b| b.is_ascii()) {
             return Err(ParseError::NonASCIICharacters);
         }
@@ -221,6 +261,50 @@ mod tests {
         assert_eq!(
             ARecord::parse("ACAMWatFoo").unwrap(),
             ARecord::new(Manufacturer::CambridgeAeroInstruments, "Wat", Some("Foo"))
+        );
+
+        assert_eq!(
+            ARecord::parse("ACAMWatFoo").unwrap(),
+            ARecord::new(Manufacturer::CambridgeAeroInstruments, "Wat", Some("Foo"))
+        );
+
+        // from https://skylines.aero/files/th_46eg6ng1.igc
+        assert_eq!(
+            ARecord::parse("AFLA6NG").unwrap(),
+            ARecord::new(Manufacturer::Flarm, "6NG", None)
+        );
+
+        // from http://www.gliding.ch/images/news/lx20/fichiers_igc.htm
+        assert_eq!(
+            ARecord::parse("AC00069").unwrap(),
+            ARecord::new(Manufacturer::CambridgeAeroInstruments, "00069", None)
+        );
+
+        // from LX8000 (see `example.igc`)
+        assert_eq!(
+            ARecord::parse("ALXVK4AFLIGHT:1").unwrap(),
+            ARecord::new(Manufacturer::LxNav, "K4A", Some("FLIGHT:1"))
+        );
+
+        // from https://github.com/XCSoar/XCSoar/blob/v6.8.11/test/data/lxn_to_igc/18BF14K1.igc
+        assert_eq!(
+            ARecord::parse("AFIL01460FLIGHT:1").unwrap(),
+            ARecord::new(Manufacturer::Filser, "01460", Some("FLIGHT:1"))
+        );
+
+        assert_eq!(
+            ARecord::parse("AX00000").unwrap(),
+            ARecord::new(Manufacturer::UnknownSingle(b'X'), "00000", None)
+        );
+
+        assert_eq!(
+            ARecord::parse("AXYZABC:foobar").unwrap(),
+            ARecord::new(Manufacturer::UnknownTriple("XYZ"), "ABC", Some(":foobar"))
+        );
+
+        assert_eq!(
+            ARecord::parse("AWIN000").unwrap(),
+            ARecord::new(Manufacturer::UnknownTriple("WIN"), "000", None)
         );
     }
 
