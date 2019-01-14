@@ -144,6 +144,7 @@ impl<'a> fmt::Display for Record<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::util::Manufacturer;
 
     #[test]
     fn parse_empty_string() {
