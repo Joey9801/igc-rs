@@ -13,7 +13,7 @@ pub struct CRecordDeclaration<'a> {
     pub time: Time,
     pub flight_date: Date,
     pub task_id: u16,
-    pub turnpoint_count: u8,
+    pub turnpoint_count: i8,
     pub task_name: Option<&'a str>,
 }
 
@@ -43,7 +43,7 @@ impl<'a> CRecordDeclaration<'a> {
         let time = line[7..13].parse()?;
         let flight_date = line[13..19].parse()?;
         let task_id = line[19..23].parse::<u16>()?;
-        let turnpoint_count = line[23..25].parse::<u8>()?;
+        let turnpoint_count = line[23..25].parse::<i8>()?;
         let task_name = if line.len() > 25 {
             Some(&line[25..])
         } else {
@@ -203,6 +203,32 @@ mod tests {
         let expected_string = "C230718092044000000000204";
         declaration.task_name = None;
         assert_eq!(format!("{}", declaration), expected_string);
+    }
+
+    #[test]
+    /// Filser LX5000 records `turnpoint_count: -2` when no task has been declared
+    fn c_record_declaration_format_with_negative_tp_count() {
+        let declaration = CRecordDeclaration {
+            date: Date {
+                day: 10,
+                month: 05,
+                year: 09,
+            },
+            time: Time {
+                hours: 12,
+                minutes: 01,
+                seconds: 53,
+            },
+            flight_date: Date {
+                day: 10,
+                month: 05,
+                year: 09,
+            },
+            task_id: 1,
+            turnpoint_count: -2,
+            task_name: None,
+        };
+        assert_eq!(format!("{}", declaration), "C1005091201531005090001-2");
     }
 
     #[test]
