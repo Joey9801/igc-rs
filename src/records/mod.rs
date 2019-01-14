@@ -93,6 +93,10 @@ impl<'a> Record<'a> {
             b'C' => {
                 // In a turnpoint C record, the 9th character is the N/S of the latitutde
                 // In a declaration type C record, it is a number (part of the declaration time)
+                if line.len() < 9 {
+                    return Err(ParseError::SyntaxError);
+                }
+
                 match line.as_bytes()[8] {
                     b'N' | b'S' => Record::CTurnpoint(CRecordTurnpoint::parse(line)?),
                     _ => Record::CDeclaration(CRecordDeclaration::parse(line)?),
@@ -157,6 +161,11 @@ mod tests {
                 id_extension: Some("Foo")
             })
         );
+    }
+
+    #[test]
+    fn record_parse_short_c_record() {
+        assert!(Record::parse_line("C123").is_err());
     }
 
     #[test]
