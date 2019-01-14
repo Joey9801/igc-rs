@@ -156,6 +156,18 @@ pub struct ARecord<'a> {
 }
 
 impl<'a> ARecord<'a> {
+    pub fn new(
+        manufacturer: Manufacturer<'a>,
+        unique_id: &'a str,
+        id_extension: Option<&'a str>,
+    ) -> ARecord<'a> {
+        ARecord {
+            manufacturer,
+            unique_id,
+            id_extension,
+        }
+    }
+
     /// Parse an IGC A Record string
     ///
     /// ```
@@ -183,11 +195,7 @@ impl<'a> ARecord<'a> {
             None
         };
 
-        Ok(ARecord {
-            manufacturer,
-            unique_id,
-            id_extension,
-        })
+        Ok(ARecord::new(manufacturer, unique_id, id_extension))
     }
 }
 
@@ -212,11 +220,7 @@ mod tests {
     fn arecord_parse() {
         assert_eq!(
             ARecord::parse("ACAMWatFoo").unwrap(),
-            ARecord {
-                manufacturer: Manufacturer::CambridgeAeroInstruments,
-                unique_id: "Wat",
-                id_extension: Some("Foo")
-            }
+            ARecord::new(Manufacturer::CambridgeAeroInstruments, "Wat", Some("Foo"))
         );
     }
 
@@ -230,11 +234,7 @@ mod tests {
         assert_eq!(
             format!(
                 "{}",
-                ARecord {
-                    manufacturer: Manufacturer::CambridgeAeroInstruments,
-                    unique_id: "Wat",
-                    id_extension: Some("Foo")
-                }
+                ARecord::new(Manufacturer::CambridgeAeroInstruments, "Wat", Some("Foo"))
             ),
             "ACAMWatFoo"
         );
