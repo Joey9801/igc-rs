@@ -17,6 +17,10 @@ impl Time {
     pub fn parse(time_string: &str) -> Result<Self, ParseError> {
         assert_eq!(time_string.len(), 6);
 
+        if !time_string.is_ascii() {
+            return Err(ParseError::NonASCIICharacters);
+        }
+
         let hours = time_string[0..2].parse::<u8>()?;
         let minutes = time_string[2..4].parse::<u8>()?;
         let seconds = time_string[4..6].parse::<u8>()?;
@@ -79,6 +83,10 @@ impl Date {
     pub fn parse(date_string: &str) -> Result<Self, ParseError> {
         assert_eq!(date_string.len(), 6);
 
+        if !date_string.is_ascii() {
+            return Err(ParseError::NonASCIICharacters);
+        }
+
         let day = date_string[0..2].parse::<u8>()?;
         let month = date_string[2..4].parse::<u8>()?;
         let year = date_string[4..6].parse::<u8>()?;
@@ -127,6 +135,11 @@ mod test {
     }
 
     #[test]
+    fn time_parse_with_invalid_char_boundary() {
+        assert!(Time::parse("🌀aa").is_err());
+    }
+
+    #[test]
     fn time_fmt() {
         assert_eq!(format!("{}", Time::from_hms(1, 23, 45)), "012345");
     }
@@ -138,8 +151,28 @@ mod test {
     }
 
     #[test]
+    fn date_parse_with_invalid_char_boundary() {
+        assert!(Date::parse("🌀aa").is_err());
+    }
+
+    #[test]
     fn date_fmt() {
         assert_eq!(format!("{}", Date::from_dmy(5, 10, 18)), "051018");
     }
 
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn time_parse_back_to_original(h in 0u8..24, m in 0u8..60, s in 0u8..60) {
+            let time = Time::from_hms(h, m, s);
+            prop_assert_eq!(Time::parse(&format!("{}", time)).unwrap(), time);
+        }
+
+        #[test]
+        #[allow(unused_must_use)]
+        fn date_parse_back_to_original(d in 1u8..32, m in 1u8..13, y in 0u8..100) {
+            let date = Date::from_dmy(d, m, y);
+            prop_assert_eq!(Date::parse(&format!("{}", date)).unwrap(), date);
+        }
+    }
 }

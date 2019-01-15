@@ -171,6 +171,9 @@ impl<'a> ARecord<'a> {
         if line.len() < 7 {
             return Err(ParseError::SyntaxError);
         }
+        if !line.bytes().take(7).all(|b| b.is_ascii()) {
+            return Err(ParseError::NonASCIICharacters);
+        }
 
         let manufacturer = Manufacturer::parse_triple_char(&line[1..4]);
         let unique_id = &line[4..7];
@@ -218,6 +221,11 @@ mod tests {
     }
 
     #[test]
+    fn parse_with_invalid_char_boundary() {
+        assert!(ARecord::parse("A0ꢀ￼").is_err());
+    }
+
+    #[test]
     fn arecord_fmt() {
         assert_eq!(
             format!(
@@ -230,5 +238,13 @@ mod tests {
             ),
             "ACAMWatFoo"
         );
+    }
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn parse_doesnt_crash(s in "A\\PC*") {
+            ARecord::parse(&s);
+        }
     }
 }

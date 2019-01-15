@@ -45,12 +45,20 @@ impl<'a> HRecord<'a> {
         let bytes = line.as_bytes();
         assert_eq!(bytes[0], b'H');
 
+        if bytes.len() < 6 {
+            return Err(ParseError::SyntaxError);
+        }
+        if !line.bytes().take(5).all(|b| b.is_ascii()) {
+            return Err(ParseError::NonASCIICharacters);
+        }
+
         let data_source = DataSource::from_byte(bytes[1]);
         let mnemonic = &line[2..5];
 
         let friendly_name;
         let data;
-        if let Some(colon_idx) = line.find(':') {
+        if let Some(colon_idx) = &line[5..].find(':') {
+            let colon_idx = *colon_idx + 5;
             friendly_name = Some(&line[5..colon_idx]);
             data = &line[colon_idx + 1..];
         } else {
@@ -109,6 +117,40 @@ mod tests {
     }
 
     #[test]
+    fn parse_with_missing_content() {
+        assert!(HRecord::parse("H").is_err());
+        assert!(HRecord::parse("HXXX").is_err());
+    }
+
+    #[test]
+    fn parse_with_early_colon() {
+        assert_eq!(
+            HRecord::parse("H:00 a ").unwrap(),
+            HRecord {
+                data_source: DataSource::Unrecognized(b':'),
+                mnemonic: "00 ",
+                friendly_name: None,
+                data: "a ",
+            }
+        );
+
+        assert_eq!(
+            HRecord::parse("HAaA :a").unwrap(),
+            HRecord {
+                data_source: DataSource::Unrecognized(b'A'),
+                mnemonic: "aA ",
+                friendly_name: Some(""),
+                data: "a",
+            }
+        );
+    }
+
+    #[test]
+    fn parse_with_invalid_char_boundary() {
+        assert!(HRecord::parse("H\u{1107f}").is_err());
+    }
+
+    #[test]
     fn hrecord_format() {
         let expected_string = "HFGIDGLIDERID:D-KOOL";
         let record = HRecord {
@@ -119,5 +161,13 @@ mod tests {
         };
 
         assert_eq!(format!("{}", record), expected_string);
+    }
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn parse_doesnt_crash(s in "H\\PC*") {
+            HRecord::parse(&s);
+        }
     }
 }

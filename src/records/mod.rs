@@ -83,6 +83,10 @@ impl<'a> Record<'a> {
     /// }
     /// ```
     pub fn parse_line(line: &'a str) -> Result<Self, ParseError> {
+        if line.is_empty() {
+            return Err(ParseError::SyntaxError);
+        }
+
         let rec = match line.as_bytes()[0] {
             b'A' => Record::A(ARecord::parse(line)?),
             b'B' => Record::B(BRecord::parse(line)?),
@@ -138,6 +142,11 @@ mod tests {
     use super::*;
 
     #[test]
+    fn parse_empty_string() {
+        assert!(Record::parse_line("").is_err());
+    }
+
+    #[test]
     fn record_parse_line() {
         let rec = Record::parse_line("ACAMWatFoo").unwrap();
         assert_eq!(
@@ -160,5 +169,13 @@ mod tests {
         });
 
         assert_eq!(format!("{}", rec), expected_str);
+    }
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn doesnt_crash(s in "\\PC*") {
+            Record::parse_line(&s);
+        }
     }
 }

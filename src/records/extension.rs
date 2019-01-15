@@ -112,6 +112,9 @@ impl<'a> ExtensionDefRecord<'a> {
         if line.len() < 3 {
             return Err(ParseError::SyntaxError);
         }
+        if !line.is_ascii() {
+            return Err(ParseError::NonASCIICharacters);
+        }
 
         let num_extensions = line[1..3].parse::<u8>()?;
 
@@ -171,5 +174,18 @@ mod tests {
         };
 
         assert_eq!(parsed_record, expected);
+    }
+
+    #[test]
+    fn parse_with_invalid_char_boundary() {
+        assert!(ExtensionDefRecord::parse("I\u{1107f}").is_err());
+    }
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn parse_doesnt_crash(s in "I\\PC*") {
+            ExtensionDefRecord::parse(&s);
+        }
     }
 }

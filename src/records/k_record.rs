@@ -19,6 +19,9 @@ impl<'a> KRecord<'a> {
         if line.len() <= 7 {
             return Err(ParseError::SyntaxError);
         }
+        if !line.is_ascii() {
+            return Err(ParseError::NonASCIICharacters);
+        }
 
         let time = line[1..7].parse()?;
         let extension_string = &line[7..];
@@ -62,6 +65,11 @@ mod tests {
     }
 
     #[test]
+    fn parse_with_invalid_char_boundary() {
+        assert!(KRecord::parse("Kኲበ᧞").is_err());
+    }
+
+    #[test]
     fn krecord_format() {
         let expected_string = "K095214FooTheBar";
         let record = KRecord {
@@ -97,5 +105,13 @@ mod tests {
         assert_eq!(record.get_extension(&ext1).unwrap(), "Foo");
         assert_eq!(record.get_extension(&ext2).unwrap(), "The");
         assert_eq!(record.get_extension(&ext3).unwrap(), "Bar");
+    }
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn parse_doesnt_crash(s in "K\\PC*") {
+            KRecord::parse(&s);
+        }
     }
 }

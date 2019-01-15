@@ -14,6 +14,9 @@ impl<'a> FRecord<'a> {
         if line.len() < 7 {
             return Err(ParseError::SyntaxError);
         }
+        if !line.is_ascii() {
+            return Err(ParseError::NonASCIICharacters);
+        }
 
         let time = line[1..7].parse()?;
 
@@ -88,6 +91,11 @@ mod tests {
     }
 
     #[test]
+    fn parse_with_invalid_char_boundary() {
+        assert!(FRecord::parse("Fኲበ᧞").is_err());
+    }
+
+    #[test]
     fn satellite_iter() {
         let satellite_array = SatelliteArray::new("AABBCCDDEE");
         assert_eq!(
@@ -105,5 +113,13 @@ mod tests {
         };
 
         assert_eq!(format!("{}", record), expected_string);
+    }
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn parse_doesnt_crash(s in "F\\PC*") {
+            FRecord::parse(&s);
+        }
     }
 }

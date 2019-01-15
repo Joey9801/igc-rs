@@ -82,6 +82,10 @@ impl FromStr for RawLatitude {
             "Raw latitude strings are 8 characters long"
         );
 
+        if !lat_string.is_ascii() {
+            return Err(ParseError::NonASCIICharacters);
+        }
+
         let degrees = lat_string[0..2].parse::<u8>()?;
         let minute_thousandths = lat_string[2..7].parse::<u16>()?;
         let sign = match &lat_string[7..8] {
@@ -152,6 +156,10 @@ impl FromStr for RawLongitude {
             "Raw longitude strings are 9 characters long"
         );
 
+        if !lon_string.is_ascii() {
+            return Err(ParseError::NonASCIICharacters);
+        }
+
         let degrees = lon_string[0..3].parse::<u8>()?;
         let minute_thousandths = lon_string[3..8].parse::<u16>()?;
         let sign = match &lon_string[8..9] {
@@ -206,6 +214,11 @@ impl FromStr for RawPosition {
 
     fn from_str(pos_string: &str) -> Result<Self, ParseError> {
         assert_eq!(pos_string.len(), 17);
+
+        if !pos_string.is_ascii() {
+            return Err(ParseError::NonASCIICharacters);
+        }
+
         let lat = pos_string[0..8].parse()?;
         let lon = pos_string[8..17].parse()?;
 
@@ -238,6 +251,11 @@ mod test {
     }
 
     #[test]
+    fn raw_lat_parse_with_invalid_char_boundary() {
+        assert!("🌀aaaa".parse::<RawLatitude>().is_err());
+    }
+
+    #[test]
     fn raw_coord_parse_lon() {
         assert_eq!(
             RawLongitude::new(51, 52_265, Compass::East),
@@ -248,6 +266,11 @@ mod test {
             RawLongitude::new(51, 52_265, Compass::West),
             "05152265W".parse().unwrap()
         );
+    }
+
+    #[test]
+    fn raw_lon_parse_with_invalid_char_boundary() {
+        assert!("🌀aaaaa".parse::<RawLongitude>().is_err());
     }
 
     #[test]
@@ -286,6 +309,11 @@ mod test {
     }
 
     #[test]
+    fn parse_raw_position_with_invalid_char_boundary() {
+        assert!("🌀🌀🌀🌀a".parse::<RawPosition>().is_err());
+    }
+
+    #[test]
     fn convert_to_float() {
         assert_relative_eq!(
             "05152265E".parse::<RawLongitude>().unwrap().into(),
@@ -295,5 +323,27 @@ mod test {
             "5152265S".parse::<RawLatitude>().unwrap().into(),
             -51.87108333333333f64
         );
+    }
+
+    proptest! {
+        #[test]
+        #[allow(unused_must_use)]
+        fn raw_lat_parse_back_to_original(d in 0u8..90, m in 0u16..60_000) {
+            let lat = RawLatitude::new(d, m, Compass::North);
+            prop_assert_eq!(format!("{}", lat).parse::<RawLatitude>().unwrap(), lat);
+
+            let lat = RawLatitude::new(d, m, Compass::South);
+            prop_assert_eq!(format!("{}", lat).parse::<RawLatitude>().unwrap(), lat);
+        }
+
+        #[test]
+        #[allow(unused_must_use)]
+        fn raw_lon_parse_back_to_original(d in 0u8..180, m in 0u16..60_000) {
+            let lon = RawLongitude::new(d, m, Compass::East);
+            prop_assert_eq!(format!("{}", lon).parse::<RawLongitude>().unwrap(), lon);
+
+            let lon = RawLongitude::new(d, m, Compass::West);
+            prop_assert_eq!(format!("{}", lon).parse::<RawLongitude>().unwrap(), lon);
+        }
     }
 }
