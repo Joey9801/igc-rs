@@ -33,3 +33,12 @@ jobs:
 
       script:
         - cargo clippy
+
+    - name: WebAssembly
+      rust: 1.31.0
+
+      install:
+        - rustup target add wasm32-unknown-unknown
+
+      script:
+        - cargo check --target wasm32-unknown-unknown
