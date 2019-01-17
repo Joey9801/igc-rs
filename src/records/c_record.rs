@@ -138,16 +138,8 @@ mod tests {
         let sample_string = "C230718092044000000000204Foo task";
         let parsed_declaration = CRecordDeclaration::parse(sample_string).unwrap();
         let mut expected = CRecordDeclaration {
-            date: Date {
-                day: 23,
-                month: 07,
-                year: 18,
-            },
-            time: Time {
-                hours: 09,
-                minutes: 20,
-                seconds: 44,
-            },
+            date: Date::from_dmy(23, 07, 18),
+            time: Time::from_hms(09, 20, 44),
             flight_date: Date {
                 day: 00,
                 month: 00,
@@ -179,16 +171,8 @@ mod tests {
     fn c_record_declaration_format() {
         let expected_string = "C230718092044000000000204Foo task";
         let mut declaration = CRecordDeclaration {
-            date: Date {
-                day: 23,
-                month: 07,
-                year: 18,
-            },
-            time: Time {
-                hours: 09,
-                minutes: 20,
-                seconds: 44,
-            },
+            date: Date::from_dmy(23, 07, 18),
+            time: Time::from_hms(09, 20, 44),
             flight_date: Date {
                 day: 00,
                 month: 00,
@@ -209,21 +193,9 @@ mod tests {
     /// Filser LX5000 records `turnpoint_count: -2` when no task has been declared
     fn c_record_declaration_format_with_negative_tp_count() {
         let declaration = CRecordDeclaration {
-            date: Date {
-                day: 10,
-                month: 05,
-                year: 09,
-            },
-            time: Time {
-                hours: 12,
-                minutes: 01,
-                seconds: 53,
-            },
-            flight_date: Date {
-                day: 10,
-                month: 05,
-                year: 09,
-            },
+            date: Date::from_dmy(10, 05, 09),
+            time: Time::from_hms(12, 01, 53),
+            flight_date: Date::from_dmy(10, 05, 09),
             task_id: 1,
             turnpoint_count: -2,
             task_name: None,
