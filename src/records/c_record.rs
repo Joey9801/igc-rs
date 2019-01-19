@@ -11,7 +11,7 @@ use crate::util::{Date, DisplayOption, ParseError, RawPosition, Time};
 pub struct CRecordDeclaration<'a> {
     pub date: Date,
     pub time: Time,
-    pub flight_date: Date,
+    pub flight_date: Option<Date>,
     pub task_id: u16,
     pub turnpoint_count: i8,
     pub task_name: Option<&'a str>,
@@ -41,7 +41,10 @@ impl<'a> CRecordDeclaration<'a> {
 
         let date = line[1..7].parse()?;
         let time = line[7..13].parse()?;
-        let flight_date = line[13..19].parse()?;
+        let flight_date = match &line[13..19] {
+            "000000" => None,
+            s => Some(s.parse()?),
+        };
         let task_id = line[19..23].parse::<u16>()?;
         let turnpoint_count = line[23..25].parse::<i8>()?;
         let task_name = if line.len() > 25 {
@@ -63,12 +66,17 @@ impl<'a> CRecordDeclaration<'a> {
 
 impl<'a> fmt::Display for CRecordDeclaration<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let flight_date = match &self.flight_date {
+            None => "000000".to_string(),
+            Some(flight_date) => flight_date.to_string(),
+        };
+
         write!(
             f,
             "C{date}{time}{flight_date}{task_id:04}{tp_count:02}{task_name}",
             date = self.date,
             time = self.time,
-            flight_date = self.flight_date,
+            flight_date = flight_date,
             task_id = self.task_id,
             tp_count = self.turnpoint_count,
             task_name = DisplayOption(self.task_name)
@@ -140,11 +148,7 @@ mod tests {
         let mut expected = CRecordDeclaration {
             date: Date::from_dmy(23, 07, 18),
             time: Time::from_hms(09, 20, 44),
-            flight_date: Date {
-                day: 00,
-                month: 00,
-                year: 00,
-            },
+            flight_date: None,
             task_id: 2,
             turnpoint_count: 4,
             task_name: Some("Foo task"),
@@ -173,11 +177,7 @@ mod tests {
         let mut declaration = CRecordDeclaration {
             date: Date::from_dmy(23, 07, 18),
             time: Time::from_hms(09, 20, 44),
-            flight_date: Date {
-                day: 00,
-                month: 00,
-                year: 00,
-            },
+            flight_date: None,
             task_id: 2,
             turnpoint_count: 4,
             task_name: Some("Foo task"),
@@ -195,7 +195,7 @@ mod tests {
         let declaration = CRecordDeclaration {
             date: Date::from_dmy(10, 05, 09),
             time: Time::from_hms(12, 01, 53),
-            flight_date: Date::from_dmy(10, 05, 09),
+            flight_date: Some(Date::from_dmy(10, 05, 09)),
             task_id: 1,
             turnpoint_count: -2,
             task_name: None,
