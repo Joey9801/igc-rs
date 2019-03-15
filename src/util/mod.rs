@@ -3,9 +3,11 @@
 mod coord;
 mod datetime;
 mod display_option;
+mod manufacturer;
 mod parse_error;
 
 pub use self::coord::{Compass, RawCoord, RawLatitude, RawLongitude, RawPosition};
 pub use self::datetime::{Date, Time};
 pub use self::display_option::DisplayOption;
+pub use self::manufacturer::Manufacturer;
 pub use self::parse_error::ParseError;
