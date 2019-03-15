@@ -155,11 +155,11 @@ mod tests {
         let rec = Record::parse_line("ACAMWatFoo").unwrap();
         assert_eq!(
             rec,
-            Record::A(ARecord {
-                manufacturer: Manufacturer::CambridgeAeroInstruments,
-                unique_id: "Wat",
-                id_extension: Some("Foo")
-            })
+            Record::A(ARecord::new(
+                Manufacturer::CambridgeAeroInstruments,
+                "Wat",
+                Some("Foo")
+            ))
         );
     }
 
@@ -171,11 +171,11 @@ mod tests {
     #[test]
     fn record_format() {
         let expected_str = "ACAMWatFoo";
-        let rec = Record::A(ARecord {
-            manufacturer: Manufacturer::CambridgeAeroInstruments,
-            unique_id: "Wat",
-            id_extension: Some("Foo"),
-        });
+        let rec = Record::A(ARecord::new(
+            Manufacturer::CambridgeAeroInstruments,
+            "Wat",
+            Some("Foo"),
+        ));
 
         assert_eq!(format!("{}", rec), expected_str);
     }
