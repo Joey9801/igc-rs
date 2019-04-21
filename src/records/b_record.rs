@@ -3,7 +3,7 @@ use std::fmt;
 use crate::records::extension::Extendable;
 use crate::util::{ParseError, RawPosition, Time};
 
-/// Possible values for the "fix valid" field of a B Record
+/// Possible values for the "fix valid" field of a B record
 #[derive(Debug, PartialEq, Eq)]
 pub enum FixValid {
     Valid,
