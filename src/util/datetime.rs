@@ -48,6 +48,12 @@ impl Time {
             seconds,
         }
     }
+
+    /// Helper method to get the seconds since midnight.
+    pub fn seconds_since_midnight(&self) -> u32 {
+        let mins: u32 = u32::from(self.hours) * 60 + u32::from(self.minutes);
+        mins * 60 + u32::from(self.seconds)
+    }
 }
 
 impl FromStr for Time {
@@ -142,6 +148,28 @@ mod test {
     #[test]
     fn time_fmt() {
         assert_eq!(format!("{}", Time::from_hms(1, 23, 45)), "012345");
+    }
+
+    #[test]
+    fn time_seconds_since_midnight() {
+        assert_eq!(
+            Time {
+                hours: 0,
+                minutes: 0,
+                seconds: 0
+            }
+            .seconds_since_midnight(),
+            0
+        );
+        assert_eq!(
+            Time {
+                hours: 1,
+                minutes: 2,
+                seconds: 3
+            }
+            .seconds_since_midnight(),
+            3600 + 120 + 3
+        );
     }
 
     #[test]
