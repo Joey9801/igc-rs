@@ -315,14 +315,10 @@ mod test {
 
     #[test]
     fn convert_to_float() {
-        assert_relative_eq!(
-            "05152265E".parse::<RawLongitude>().unwrap().into(),
-            51.871082f32
-        );
-        assert_relative_eq!(
-            "5152265S".parse::<RawLatitude>().unwrap().into(),
-            -51.87108333333333f64
-        );
+        let f1: f32 = "05152265E".parse::<RawLongitude>().unwrap().into();
+        assert_relative_eq!(f1, 51.871082f32);
+        let f2: f64 = "5152265S".parse::<RawLatitude>().unwrap().into();
+        assert_relative_eq!(f2, -51.87108333333333f64);
     }
 
     proptest! {
