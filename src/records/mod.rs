@@ -33,7 +33,7 @@ mod k_record;
 mod l_record;
 
 pub use self::a_record::*;
-pub use self::b_record::BRecord;
+pub use self::b_record::{BRecord, FixValid};
 pub use self::c_record::{CRecordDeclaration, CRecordTurnpoint};
 pub use self::d_record::DRecord;
 pub use self::e_record::ERecord;
