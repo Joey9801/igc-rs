@@ -1,10 +1,11 @@
 [package]
 name = "igc"
 description = "A fast, minimal parser for IGC flight recorder files"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Joe Roberts <joe@jwjr.co.uk>"]
 repository = "https://github.com/Joey9801/igc-rs"
 documentation = "https://docs.rs/igc"
+readme = "README.md"
 license = "MIT"
 edition = "2018"
 

@@ -7,4 +7,4 @@
 [Docs]: https://docs.rs/igc/badge.svg
 [docs.rs]: https://docs.rs/igc
 
-**igc-rs provides a minimal, fast parser for IGC flight recorder files in the Rust language.**
+**igc-rs provides a minimal, fast parser for IGC flight recorder record lines in the Rust language.**
