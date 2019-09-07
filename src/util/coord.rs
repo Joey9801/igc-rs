@@ -32,8 +32,8 @@ pub struct RawCoord {
     pub sign: Compass,
 }
 
-impl From<RawCoord> for f32 {
-    fn from(coord: RawCoord) -> Self {
+impl From<&RawCoord> for f32 {
+    fn from(coord: &RawCoord) -> Self {
         let value =
             Self::from(coord.degrees) + Self::from(coord.minute_thousandths) / 60_000.;
         match coord.sign {
@@ -43,14 +43,26 @@ impl From<RawCoord> for f32 {
     }
 }
 
-impl From<RawCoord> for f64 {
-    fn from(coord: RawCoord) -> Self {
+impl From<&RawCoord> for f64 {
+    fn from(coord: &RawCoord) -> Self {
         let value =
             Self::from(coord.degrees) + Self::from(coord.minute_thousandths) / 60_000.;
         match coord.sign {
             Compass::North | Compass::East => value,
             Compass::South | Compass::West => -value,
         }
+    }
+}
+
+impl From<RawCoord> for f32 {
+    fn from(coord: RawCoord) -> Self {
+        (&coord).into()
+    }
+}
+
+impl From<RawCoord> for f64 {
+    fn from(coord: RawCoord) -> Self {
+        (&coord).into()
     }
 }
 
@@ -116,17 +128,26 @@ impl fmt::Display for RawLatitude {
     }
 }
 
-impl From<RawLatitude> for f32 {
-    fn from(lat: RawLatitude) -> Self {
-        lat.0.into()
-    }
+/// A macro to create `From<T>` and `From<&T>` impls that work for types where
+/// `&(T.0)` can be converted into the target type using `.into()`.
+macro_rules! impl_from_redirect_to_inner {
+    ($from:ty, $into:ty) => {
+        impl From<&$from> for $into {
+            fn from(val: &$from) -> Self {
+                (&val.0).into()
+            }
+        }
+
+        impl From<$from> for $into {
+            fn from(val: $from) -> Self {
+                (&val).into()
+            }
+        }
+    };
 }
 
-impl From<RawLatitude> for f64 {
-    fn from(lat: RawLatitude) -> Self {
-        lat.0.into()
-    }
-}
+impl_from_redirect_to_inner!(RawLatitude, f32);
+impl_from_redirect_to_inner!(RawLatitude, f64);
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct RawLongitude(pub RawCoord);
@@ -190,17 +211,8 @@ impl fmt::Display for RawLongitude {
     }
 }
 
-impl From<RawLongitude> for f32 {
-    fn from(lon: RawLongitude) -> Self {
-        lon.0.into()
-    }
-}
-
-impl From<RawLongitude> for f64 {
-    fn from(lon: RawLongitude) -> Self {
-        lon.0.into()
-    }
-}
+impl_from_redirect_to_inner!(RawLongitude, f32);
+impl_from_redirect_to_inner!(RawLongitude, f64);
 
 /// A raw lat/lon pair.
 #[derive(Debug, PartialEq, Eq, Clone)]
@@ -318,6 +330,17 @@ mod test {
         let f1: f32 = "05152265E".parse::<RawLongitude>().unwrap().into();
         assert_relative_eq!(f1, 51.871082f32);
         let f2: f64 = "5152265S".parse::<RawLatitude>().unwrap().into();
+        assert_relative_eq!(f2, -51.87108333333333f64);
+    }
+
+    #[test]
+    fn convert_to_float_ref() {
+        let lon: RawLongitude = "05152265E".parse().unwrap();
+        let f1: f32 = (&lon).into();
+        assert_relative_eq!(f1, 51.871082f32);
+
+        let lat: RawLatitude = "5152265S".parse().unwrap();
+        let f2: f64 = (&lat).into();
         assert_relative_eq!(f2, -51.87108333333333f64);
     }
 
