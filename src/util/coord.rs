@@ -3,7 +3,7 @@ use std::{fmt, str::FromStr};
 use crate::util::ParseError;
 
 /// Enumeration of cardinal directions
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub enum Compass {
     North,
     South,
@@ -25,7 +25,7 @@ impl fmt::Display for Compass {
 }
 
 /// Represents a latitude OR longitude, closely representing the form used in IGC files.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct RawCoord {
     pub degrees: u8,             // in range (0, 90) for lat, (0, 180) for lon
     pub minute_thousandths: u16, // in range (0, 60000). UINT16_MAX = 65535.
@@ -54,7 +54,7 @@ impl From<RawCoord> for f64 {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct RawLatitude(pub RawCoord);
 
 impl RawLatitude {
@@ -128,7 +128,7 @@ impl From<RawLatitude> for f64 {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct RawLongitude(pub RawCoord);
 
 impl RawLongitude {
@@ -203,7 +203,7 @@ impl From<RawLongitude> for f64 {
 }
 
 /// A raw lat/lon pair.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct RawPosition {
     pub lat: RawLatitude,
     pub lon: RawLongitude,
