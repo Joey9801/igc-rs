@@ -47,7 +47,7 @@ pub use self::k_record::KRecord;
 pub use self::l_record::LRecord;
 
 /// Sum type of all possible records in an IGC file.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Record<'a> {
     A(ARecord<'a>),
     B(BRecord<'a>),

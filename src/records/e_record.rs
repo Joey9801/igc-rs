@@ -6,7 +6,7 @@ use crate::util::{DisplayOption, ParseError, Time};
 /// following.
 ///
 /// An official Event needs a B Record with the same timestamp.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ERecord<'a> {
     pub time: Time,
     pub mnemonic: &'a str,

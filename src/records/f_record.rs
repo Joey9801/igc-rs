@@ -3,7 +3,7 @@ use std::fmt;
 use crate::util::{ParseError, Time};
 
 /// A record indicating a change in the satellite constellation being used.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct FRecord<'a> {
     pub time: Time,
     pub satellites: SatelliteArray<'a>,
@@ -36,7 +36,7 @@ impl<'a> fmt::Display for FRecord<'a> {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SatelliteArray<'a> {
     raw_str: &'a str,
 }

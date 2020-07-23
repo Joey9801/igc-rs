@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Manufacturer<'a> {
     Aircotec,
     CambridgeAeroInstruments,

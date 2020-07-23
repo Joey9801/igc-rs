@@ -5,7 +5,7 @@ use crate::util::parse_error::ParseError;
 /// Represents a specific time of day with second precision.
 ///
 /// Does not contain any timezone information as the IGC specification mandates UTC everywhere.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Time {
     pub seconds: u8,
     pub minutes: u8,
@@ -71,7 +71,7 @@ impl fmt::Display for Time {
 }
 
 /// Represents a single Gregorian calendar day
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Date {
     /// In the range [1, 31]
     pub day: u8,

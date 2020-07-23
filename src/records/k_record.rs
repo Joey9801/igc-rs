@@ -6,7 +6,7 @@ use crate::util::{ParseError, Time};
 /// An extension data record.
 ///
 /// Contains only a timestamp by default, but can be extended with a J record.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct KRecord<'a> {
     pub time: Time,
     extension_string: &'a str,
