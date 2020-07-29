@@ -3,7 +3,7 @@ use std::fmt;
 use crate::util::ParseError;
 
 /// Enumeration of the different sources an H record can come from.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum DataSource {
     FVU,
     OfficialObserver,
@@ -12,7 +12,7 @@ pub enum DataSource {
 }
 
 /// A header information record.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct HRecord<'a> {
     pub data_source: DataSource,
     pub mnemonic: &'a str,

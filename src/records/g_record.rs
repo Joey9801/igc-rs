@@ -5,7 +5,7 @@ use crate::util::ParseError;
 /// A security record.
 ///
 /// The contents of the record are vendor dependent.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct GRecord<'a> {
     pub data: &'a str,
 }

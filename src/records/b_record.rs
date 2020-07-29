@@ -4,7 +4,7 @@ use crate::records::extension::Extendable;
 use crate::util::{ParseError, RawPosition, Time};
 
 /// Possible values for the "fix valid" field of a B record
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum FixValid {
     Valid,
     NavWarning,
@@ -18,7 +18,7 @@ pub enum FixValid {
 /// The type for the altitudes doesn't techincally cover the complete range of representable
 /// altitudes in a conformant IGC file, but to exceed it you would have to beat the Perlan
 /// Project's objective altitude (90,000ft, unachieved at the time of writing) by >15,000ft.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct BRecord<'a> {
     pub timestamp: Time,
     pub pos: RawPosition,

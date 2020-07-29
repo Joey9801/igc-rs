@@ -2,14 +2,14 @@ use std::fmt;
 
 use crate::util::ParseError;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum GpsQualifier {
     Gps,
     DGps,
 }
 
 /// Differential GPS record - indicates that Differential GPS is being used.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct DRecord<'a> {
     pub qualifier: GpsQualifier,
     pub station_id: &'a str,

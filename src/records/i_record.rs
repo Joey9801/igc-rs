@@ -3,7 +3,7 @@ use std::{fmt, str};
 use crate::records::extension::ExtensionDefRecord;
 use crate::util::ParseError;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct IRecord<'a>(pub ExtensionDefRecord<'a>);
 
 impl<'a> IRecord<'a> {

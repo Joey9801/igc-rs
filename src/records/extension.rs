@@ -6,7 +6,7 @@ use crate::util::ParseError;
 ///
 /// The start and end bytes are defined as being 1-indexed including the initial record type
 /// discrimination character.
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Extension<'a> {
     pub start_byte: u8,
     pub end_byte: u8,
@@ -97,7 +97,7 @@ pub trait Extendable {
 }
 
 /// A record defining a set of extensions (either an I or a J record)
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ExtensionDefRecord<'a> {
     pub num_extensions: u8,
     pub extensions: Vec<Extension<'a>>,

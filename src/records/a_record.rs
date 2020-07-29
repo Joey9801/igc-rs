@@ -5,7 +5,7 @@ use crate::util::Manufacturer;
 use crate::util::ParseError;
 
 /// Represents the FVU ID record
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ARecord<'a> {
     pub manufacturer: Manufacturer<'a>,
     pub unique_id: &'a str,

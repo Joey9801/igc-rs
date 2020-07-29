@@ -7,7 +7,7 @@ use crate::util::{Date, DisplayOption, ParseError, RawPosition, Time};
 /// The IGC specification states that a conforming file containing a task declaration will contain
 /// a CRecordDeclaration, immediately followed (turnpoint_count + 4) CRecordTurnpoints.
 /// The extra 4 turnpoints are for the takeoff/land locations, and the task start/finish locations
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CRecordDeclaration<'a> {
     pub date: Date,
     pub time: Time,
@@ -85,7 +85,7 @@ impl<'a> fmt::Display for CRecordDeclaration<'a> {
 }
 
 /// The second flavor of C Record - a start / turn / end point for a task.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CRecordTurnpoint<'a> {
     pub position: RawPosition,
     pub turnpoint_name: Option<&'a str>,
