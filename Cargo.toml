@@ -18,3 +18,6 @@ proptest = "0.8.7"
 [[bench]]
 name = "benchmark"
 harness = false
+
+[dependencies]
+serde = { version = "1.0.115", features = ["derive"], optional = true }

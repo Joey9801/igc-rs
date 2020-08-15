@@ -1,3 +1,5 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::{fmt, str};
 
 use crate::util::ParseError;
@@ -7,6 +9,7 @@ use crate::util::ParseError;
 /// The start and end bytes are defined as being 1-indexed including the initial record type
 /// discrimination character.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct Extension<'a> {
     pub start_byte: u8,
     pub end_byte: u8,
@@ -98,8 +101,10 @@ pub trait Extendable {
 
 /// A record defining a set of extensions (either an I or a J record)
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct ExtensionDefRecord<'a> {
     pub num_extensions: u8,
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub extensions: Vec<Extension<'a>>,
 }
 

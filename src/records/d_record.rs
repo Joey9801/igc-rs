@@ -1,8 +1,11 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 use crate::util::ParseError;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize), serde(rename_all = "lowercase"))]
 pub enum GpsQualifier {
     Gps,
     DGps,
@@ -10,6 +13,7 @@ pub enum GpsQualifier {
 
 /// Differential GPS record - indicates that Differential GPS is being used.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct DRecord<'a> {
     pub qualifier: GpsQualifier,
     pub station_id: &'a str,

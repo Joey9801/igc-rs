@@ -1,9 +1,12 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 use crate::util::ParseError;
 
 /// A simple plaintext log, used by some manufacturers for propietary extensions.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct LRecord<'a> {
     pub log_string: &'a str,
 }

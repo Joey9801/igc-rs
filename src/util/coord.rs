@@ -1,9 +1,12 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::{fmt, str::FromStr};
 
 use crate::util::ParseError;
 
 /// Enumeration of cardinal directions
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize), serde(rename_all = "lowercase"))]
 pub enum Compass {
     North,
     South,
@@ -26,6 +29,7 @@ impl fmt::Display for Compass {
 
 /// Represents a latitude OR longitude, closely representing the form used in IGC files.
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct RawCoord {
     pub degrees: u8,             // in range (0, 90) for lat, (0, 180) for lon
     pub minute_thousandths: u16, // in range (0, 60000). UINT16_MAX = 65535.
@@ -55,6 +59,7 @@ impl From<RawCoord> for f64 {
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct RawLatitude(pub RawCoord);
 
 impl RawLatitude {
@@ -129,6 +134,7 @@ impl From<RawLatitude> for f64 {
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct RawLongitude(pub RawCoord);
 
 impl RawLongitude {
@@ -204,6 +210,7 @@ impl From<RawLongitude> for f64 {
 
 /// A raw lat/lon pair.
 #[derive(Debug, PartialEq, Eq, Clone)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct RawPosition {
     pub lat: RawLatitude,
     pub lon: RawLongitude,

@@ -1,3 +1,5 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 use crate::util::ParseError;
@@ -6,6 +8,7 @@ use crate::util::ParseError;
 ///
 /// The contents of the record are vendor dependent.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct GRecord<'a> {
     pub data: &'a str,
 }

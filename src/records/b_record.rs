@@ -1,3 +1,5 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 use crate::records::extension::Extendable;
@@ -5,6 +7,7 @@ use crate::util::{ParseError, RawPosition, Time};
 
 /// Possible values for the "fix valid" field of a B record
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize), serde(rename_all = "lowercase"))]
 pub enum FixValid {
     Valid,
     NavWarning,
@@ -19,6 +22,7 @@ pub enum FixValid {
 /// altitudes in a conformant IGC file, but to exceed it you would have to beat the Perlan
 /// Project's objective altitude (90,000ft, unachieved at the time of writing) by >15,000ft.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct BRecord<'a> {
     pub timestamp: Time,
     pub pos: RawPosition,

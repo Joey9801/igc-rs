@@ -1,3 +1,5 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::{fmt, str::FromStr};
 
 use crate::util::parse_error::ParseError;
@@ -6,6 +8,7 @@ use crate::util::parse_error::ParseError;
 ///
 /// Does not contain any timezone information as the IGC specification mandates UTC everywhere.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct Time {
     pub seconds: u8,
     pub minutes: u8,
@@ -72,6 +75,7 @@ impl fmt::Display for Time {
 
 /// Represents a single Gregorian calendar day
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct Date {
     /// In the range [1, 31]
     pub day: u8,

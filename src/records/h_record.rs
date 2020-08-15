@@ -1,9 +1,12 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 use crate::util::ParseError;
 
 /// Enumeration of the different sources an H record can come from.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize), serde(rename_all = "lowercase"))]
 pub enum DataSource {
     FVU,
     OfficialObserver,
@@ -13,6 +16,7 @@ pub enum DataSource {
 
 /// A header information record.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct HRecord<'a> {
     pub data_source: DataSource,
     pub mnemonic: &'a str,

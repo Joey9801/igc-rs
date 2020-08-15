@@ -1,11 +1,15 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 use crate::util::{ParseError, Time};
 
 /// A record indicating a change in the satellite constellation being used.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct FRecord<'a> {
     pub time: Time,
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub satellites: SatelliteArray<'a>,
 }
 
@@ -37,6 +41,7 @@ impl<'a> fmt::Display for FRecord<'a> {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct SatelliteArray<'a> {
     raw_str: &'a str,
 }
