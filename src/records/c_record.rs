@@ -89,6 +89,7 @@ impl<'a> fmt::Display for CRecordDeclaration<'a> {
 
 /// The second flavor of C Record - a start / turn / end point for a task.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct CRecordTurnpoint<'a> {
     pub position: RawPosition,
     pub turnpoint_name: Option<&'a str>,
