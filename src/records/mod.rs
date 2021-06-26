@@ -14,6 +14,8 @@
 //! }
 //! ```
 
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 use crate::util::ParseError;
@@ -48,6 +50,11 @@ pub use self::l_record::LRecord;
 
 /// Sum type of all possible records in an IGC file.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "serde",
+    derive(Deserialize, Serialize),
+    serde(rename_all = "lowercase", tag = "record_type")
+)]
 pub enum Record<'a> {
     A(ARecord<'a>),
     B(BRecord<'a>),
