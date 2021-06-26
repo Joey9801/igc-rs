@@ -1,3 +1,5 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 use crate::util::{DisplayOption, ParseError, Time};
@@ -7,6 +9,7 @@ use crate::util::{DisplayOption, ParseError, Time};
 ///
 /// An official Event needs a B Record with the same timestamp.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct ERecord<'a> {
     pub time: Time,
     pub mnemonic: &'a str,

@@ -1,3 +1,5 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 use crate::util::DisplayOption;
@@ -6,6 +8,7 @@ use crate::util::ParseError;
 
 /// Represents the FVU ID record
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct ARecord<'a> {
     pub manufacturer: Manufacturer<'a>,
     pub unique_id: &'a str,

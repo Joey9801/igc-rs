@@ -1,3 +1,5 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 use crate::util::{Date, DisplayOption, ParseError, RawPosition, Time};
@@ -8,6 +10,7 @@ use crate::util::{Date, DisplayOption, ParseError, RawPosition, Time};
 /// a CRecordDeclaration, immediately followed (turnpoint_count + 4) CRecordTurnpoints.
 /// The extra 4 turnpoints are for the takeoff/land locations, and the task start/finish locations
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct CRecordDeclaration<'a> {
     pub date: Date,
     pub time: Time,

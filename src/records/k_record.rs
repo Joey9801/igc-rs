@@ -1,3 +1,5 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 use crate::records::extension::Extendable;
@@ -7,6 +9,7 @@ use crate::util::{ParseError, Time};
 ///
 /// Contains only a timestamp by default, but can be extended with a J record.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct KRecord<'a> {
     pub time: Time,
     extension_string: &'a str,
