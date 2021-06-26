@@ -6,7 +6,11 @@ use crate::util::ParseError;
 
 /// Enumeration of cardinal directions
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
-#[cfg_attr(feature = "serde", derive(Deserialize, Serialize), serde(rename_all = "lowercase"))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Deserialize, Serialize),
+    serde(rename_all = "lowercase")
+)]
 pub enum Compass {
     North,
     South,

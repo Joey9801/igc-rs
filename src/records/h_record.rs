@@ -6,7 +6,11 @@ use crate::util::ParseError;
 
 /// Enumeration of the different sources an H record can come from.
 #[derive(Clone, Debug, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(Deserialize, Serialize), serde(rename_all = "lowercase"))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Deserialize, Serialize),
+    serde(rename_all = "lowercase")
+)]
 pub enum DataSource {
     FVU,
     OfficialObserver,
