@@ -7,7 +7,9 @@ use crate::util::ParseError;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
-pub struct IRecord<'a>(#[cfg_attr(feature = "serde", serde(borrow))] pub ExtensionDefRecord<'a>);
+pub struct IRecord<'a>(
+    #[cfg_attr(feature = "serde", serde(borrow))] pub ExtensionDefRecord<'a>,
+);
 
 impl<'a> IRecord<'a> {
     pub fn parse(line: &'a str) -> Result<Self, ParseError> {

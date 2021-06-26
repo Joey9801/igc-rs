@@ -7,7 +7,11 @@ use crate::util::{ParseError, RawPosition, Time};
 
 /// Possible values for the "fix valid" field of a B record
 #[derive(Clone, Debug, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(Deserialize, Serialize), serde(rename_all = "lowercase"))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Deserialize, Serialize),
+    serde(rename_all = "lowercase")
+)]
 pub enum FixValid {
     Valid,
     NavWarning,
