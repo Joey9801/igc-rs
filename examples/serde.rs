@@ -3,7 +3,7 @@ use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
 
-#[cfg(not(feature="serde"))]
+#[cfg(not(feature = "serde"))]
 compile_error!("This example requires igc-rs built with the `serde` feature enabled");
 
 fn main() {
@@ -22,7 +22,10 @@ fn main() {
             Ok(record) => record,
             Err(_) => std::process::exit(-1),
         };
-        
-        println!("{}", serde_json::to_string_pretty(&record).expect("Failed to serialize"));
+
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&record).expect("Failed to serialize")
+        );
     }
 }
