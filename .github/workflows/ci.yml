@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+env:
+  # Minimum Supported Rust Version
+  MSRV: 1.46.0
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rust:
+          - msrv
+          - stable
+          - beta
+          - nightly
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: rustup override set ${{ env.MSRV }}
+        if: matrix.rust == 'msrv'
+      - run: rustup override set ${{ matrix.rust }}
+        if: matrix.rust != 'msrv'
+      - uses: Swatinem/rust-cache@v1.3.0
+
+      - run: cargo check --all-targets --all-features
+        env:
+          RUSTFLAGS: "-D warnings"
+
+  wasm:
+    name: Check (WASM)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: rustup target add wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v1.3.0
+      - run: cargo check --target wasm32-unknown-unknown
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rust:
+          - msrv
+          - stable
+          - beta
+          - nightly
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: rustup override set ${{ env.MSRV }}
+        if: matrix.rust == 'msrv'
+      - run: rustup override set ${{ matrix.rust }}
+        if: matrix.rust != 'msrv'
+      - uses: Swatinem/rust-cache@v1.3.0
+
+      - run: cargo test --all-features
+
+  fmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: rustup component add rustfmt
+      - uses: Swatinem/rust-cache@v1.3.0
+      - run: cargo fmt -- --check
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: rustup component add clippy
+      - uses: Swatinem/rust-cache@v1.3.0
+      - run: cargo clippy
