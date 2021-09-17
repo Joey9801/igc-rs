@@ -4,7 +4,7 @@ branches:
 
 language: rust
 rust:
-  - 1.31.0
+  - 1.38.0
   - stable
   - beta
   - nightly
