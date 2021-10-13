@@ -1,26 +1,29 @@
 use std::io;
 use std::num;
 
+use thiserror::Error;
+
 /// Enumeration of different errors that can occur during parsing
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum ParseError {
-    IOError(io::Error),
-    Utf8Error(std::str::Utf8Error),
+    #[error(transparent)]
+    IOError(#[from] io::Error),
+    #[error(transparent)]
+    Utf8Error(#[from] std::str::Utf8Error),
+    #[error("Syntax error found")]
     SyntaxError,
+    #[error("Non-ASCII characters found")]
     NonASCIICharacters,
+    #[error("Invalid number found")]
     NumberOutOfRange,
+    #[error("Invalid extension record found")]
     BadExtension,
+    #[error("Extension record missing")]
     MissingExtension,
 }
 
 impl From<num::ParseIntError> for ParseError {
     fn from(_: num::ParseIntError) -> Self {
         ParseError::SyntaxError
-    }
-}
-
-impl From<std::str::Utf8Error> for ParseError {
-    fn from(e: std::str::Utf8Error) -> Self {
-        ParseError::Utf8Error(e)
     }
 }
