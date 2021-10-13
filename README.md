@@ -8,3 +8,7 @@
 [docs.rs]: https://docs.rs/igc
 
 **igc-rs provides a minimal, fast parser for IGC flight recorder record lines in the Rust language.**
+
+## Minimum Supported Rust Version
+
+The "Minimum Supported Rust Version" for this project is: **1.38.0**
