@@ -11,4 +11,4 @@
 
 ## Minimum Supported Rust Version
 
-The "Minimum Supported Rust Version" for this project is: **1.38.0**
+The "Minimum Supported Rust Version" for this project is: **1.46.0**
