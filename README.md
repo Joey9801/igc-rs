@@ -1,7 +1,7 @@
-# igc-rs &emsp; [![Build Status]][travis] [![Latest Version]][crates.io] [![Docs]][docs.rs]
+# igc-rs &emsp; [![Build Status]][actions] [![Latest Version]][crates.io] [![Docs]][docs.rs]
 
-[Build Status]: https://api.travis-ci.org/Joey9801/igc-rs.svg?branch=master
-[travis]: https://travis-ci.org/Joey9801/igc-rs
+[Build Status]: https://github.com/Joey9801/igc-rs/actions/workflows/ci.yml/badge.svg
+[actions]: https://github.com/Joey9801/igc-rs/actions/workflows/ci.yml
 [Latest Version]: https://img.shields.io/crates/v/igc.svg
 [crates.io]: https://crates.io/crates/igc
 [Docs]: https://docs.rs/igc/badge.svg

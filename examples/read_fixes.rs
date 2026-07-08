@@ -1,23 +1,18 @@
 use igc::records::Record;
-use std::fs::File;
-use std::io::BufRead;
-use std::io::BufReader;
 
 fn main() {
     let filename = "examples/example.igc";
 
-    let file = File::open(filename).unwrap();
-    let reader = BufReader::new(&file);
+    // Read the whole file into memory, then parse every record in one pass.
+    let contents = std::fs::read_to_string(filename).unwrap();
 
-    for result in reader.lines() {
-        let line = match result {
-            Ok(line) => line,
-            Err(_) => std::process::exit(-1),
-        };
-
-        let record = match Record::parse_line(&line) {
+    for result in igc::parse_records(&contents) {
+        let record = match result {
             Ok(record) => record,
-            Err(_) => std::process::exit(-1),
+            Err(e) => {
+                eprintln!("{}", e);
+                std::process::exit(-1);
+            }
         };
 
         if let Record::B(b_rec) = record {
