@@ -77,9 +77,9 @@ pub trait Extendable {
     fn extension_string(&self) -> &str;
 
     /// Get a given extension from the record implementing this trait.
-    fn get_extension<'a, 'b>(
+    fn get_extension<'a>(
         &'a self,
-        extension: &'b Extension<'a>,
+        extension: &Extension<'a>,
     ) -> Result<&'a str, ParseError> {
         if (extension.start_byte as usize) < Self::BASE_LENGTH {
             return Err(ParseError::BadExtension);
@@ -127,8 +127,7 @@ impl<'a> ExtensionDefRecord<'a> {
             return Err(ParseError::SyntaxError);
         }
 
-        let extensions = line[3..]
-            .as_bytes()
+        let extensions = line.as_bytes()[3..]
             .chunks(Extension::STRING_LENGTH)
             .map(unsafe { |buf| str::from_utf8_unchecked(buf) })
             .map(Extension::parse)

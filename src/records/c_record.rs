@@ -150,8 +150,8 @@ mod tests {
         let sample_string = "C230718092044000000000204Foo task";
         let parsed_declaration = CRecordDeclaration::parse(sample_string).unwrap();
         let mut expected = CRecordDeclaration {
-            date: Date::from_dmy(23, 07, 18),
-            time: Time::from_hms(09, 20, 44),
+            date: Date::from_dmy(23, 7, 18),
+            time: Time::from_hms(9, 20, 44),
             flight_date: None,
             task_id: 2,
             turnpoint_count: 4,
@@ -179,8 +179,8 @@ mod tests {
     fn c_record_declaration_format() {
         let expected_string = "C230718092044000000000204Foo task";
         let mut declaration = CRecordDeclaration {
-            date: Date::from_dmy(23, 07, 18),
-            time: Time::from_hms(09, 20, 44),
+            date: Date::from_dmy(23, 7, 18),
+            time: Time::from_hms(9, 20, 44),
             flight_date: None,
             task_id: 2,
             turnpoint_count: 4,
@@ -197,9 +197,9 @@ mod tests {
     /// Filser LX5000 records `turnpoint_count: -2` when no task has been declared
     fn c_record_declaration_format_with_negative_tp_count() {
         let declaration = CRecordDeclaration {
-            date: Date::from_dmy(10, 05, 09),
-            time: Time::from_hms(12, 01, 53),
-            flight_date: Some(Date::from_dmy(10, 05, 09)),
+            date: Date::from_dmy(10, 5, 9),
+            time: Time::from_hms(12, 1, 53),
+            flight_date: Some(Date::from_dmy(10, 5, 9)),
             task_id: 1,
             turnpoint_count: -2,
             task_name: None,
