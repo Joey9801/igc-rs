@@ -17,4 +17,4 @@ pub mod parse;
 pub mod records;
 pub mod util;
 
-pub use crate::parse::{parse_records, LineError, Records};
+pub use crate::parse::{LineError, Records, parse_records};

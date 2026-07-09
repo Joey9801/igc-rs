@@ -110,8 +110,8 @@ impl Date {
 
     /// Helper method to create a Date from a (day, month, year) triplet
     pub fn from_dmy(day: u8, month: u8, year: u8) -> Date {
-        assert!(day >= 1 && day <= 31);
-        assert!(month >= 1 && month <= 12);
+        assert!((1..=31).contains(&day));
+        assert!((1..=12).contains(&month));
         assert!(year <= 99);
         Date { day, month, year }
     }

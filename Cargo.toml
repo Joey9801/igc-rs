@@ -7,17 +7,18 @@ repository = "https://github.com/Joey9801/igc-rs"
 documentation = "https://docs.rs/igc"
 readme = "README.md"
 license = "MIT"
-edition = "2018"
+edition = "2024"
+rust-version = "1.85.0"
 keywords = ["igc", "gliding", "gps", "parser", "aviation"]
 categories = ["parser-implementations", "aerospace"]
 
 [dependencies]
 serde = { version = "1.0.126", features = ["derive"], optional = true }
-thiserror = "1.0"
+thiserror = "2.0"
 
 [dev-dependencies]
 approx = "0.5.0"
-criterion = "0.3.4"
+criterion = "0.7"
 encoding = "0.2.33"
 proptest = "1.0.0"
 serde_json = "1.0.64"

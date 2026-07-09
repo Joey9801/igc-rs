@@ -39,29 +39,22 @@ fn main() {
         for (i, line) in text.lines().enumerate() {
             let line_number = i + 1;
 
-            match Record::parse_line(&line) {
-                Err(error) => {
-                    println!("{}:{} ERROR {:?}: {}", filename, line_number, error, line);
-                    continue;
-                }
-                Ok(_) => {}
+            if let Err(error) = Record::parse_line(line) {
+                println!("{}:{} ERROR {:?}: {}", filename, line_number, error, line);
+                continue;
             };
         }
     }
 }
 
-fn is_igc_file(path: &path::PathBuf) -> bool {
-    match path.extension() {
-        None => false,
-        Some(os_str) => match os_str.to_str() {
-            Some("igc") => true,
-            _ => false,
-        },
-    }
+fn is_igc_file(path: &path::Path) -> bool {
+    matches!(
+        path.extension().and_then(|os_str| os_str.to_str()),
+        Some("igc")
+    )
 }
 
-pub fn as_text(bytes: &[u8]) -> Result<String, Cow<str>> {
-    let bytes = bytes.into();
+pub fn as_text(bytes: &[u8]) -> Result<String, Cow<'_, str>> {
     UTF_8
         .decode(bytes, DecoderTrap::Strict)
         .or_else(|_| ISO_8859_1.decode(bytes, DecoderTrap::Strict))
