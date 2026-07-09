@@ -7,8 +7,8 @@ repository = "https://github.com/Joey9801/igc-rs"
 documentation = "https://docs.rs/igc"
 readme = "README.md"
 license = "MIT"
-edition = "2021"
-rust-version = "1.71.0"
+edition = "2024"
+rust-version = "1.85.0"
 keywords = ["igc", "gliding", "gps", "parser", "aviation"]
 categories = ["parser-implementations", "aerospace"]
 

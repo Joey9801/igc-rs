@@ -80,8 +80,9 @@ See the [`examples/`](examples) directory for runnable programs, including
 
 ## Minimum Supported Rust Version
 
-The Minimum Supported Rust Version for this crate is **1.71.0**, verified in CI.
-Raising it is considered a minor, not a breaking, change.
+The Minimum Supported Rust Version for this crate is **1.85.0** (required by the
+2024 edition), verified in CI. Raising it is considered a minor, not a breaking,
+change.
 
 ## License
 
